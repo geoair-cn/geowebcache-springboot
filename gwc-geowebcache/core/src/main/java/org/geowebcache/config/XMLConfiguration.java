@@ -330,11 +330,12 @@ public class XMLConfiguration
 
         LayerInfoService layerInfoService =
                 GirBeanHelper.getProvider().getBean(LayerInfoService.class);
-        String initParameter =
-                GirBeanHelper.getProvider()
-                        .getBean(ServletContext.class)
-                        .getInitParameter(DefaultStorageFinder.GWC_CACHE_DIR);
-        layerInfoService.readXml(new File(initParameter + File.separator + "geowebcache.xml"));
+//        String initParameter =
+//                GirBeanHelper.getProvider()
+//                        .getBean(ServletContext.class)
+//                        .getInitParameter(DefaultStorageFinder.GWC_CACHE_DIR);
+        String property = System.getProperty(DefaultStorageFinder.GWC_CACHE_DIR);
+        layerInfoService.readXml(new File(property + File.separator + "geowebcache.xml"));
         List<TileLayer> layers = config.getLayers();
         Map<String, TileLayer> arcGISCaches = new HashMap<>();
         for (TileLayer layer : layers) {
