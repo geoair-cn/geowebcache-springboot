@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="20260226-0001" author="张俊">
+        <sql>
+            CREATE TABLE "public"."config_property" (
+                                                           "id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+                                                           "key" varchar(2000) COLLATE "pg_catalog"."default",
+                                                           "value" varchar(2000) COLLATE "pg_catalog"."default",
+                                                           "remark" varchar(2000) COLLATE "pg_catalog"."default",
+                                                           "update_time" timestamp(6),
+                                                           "group_name" varchar(255) COLLATE "pg_catalog"."default",
+                                                           CONSTRAINT "om_config_property_pkey" PRIMARY KEY ("id")
+            )
+            ;
+
+            ALTER TABLE "public"."config_property"
+                OWNER TO "postgres";
+
+            COMMENT ON COLUMN "public"."config_property"."id" IS '主键';
+
+COMMENT ON COLUMN "public"."config_property"."key" IS 'key';
+
+COMMENT ON COLUMN "public"."config_property"."value" IS '值';
+
+COMMENT ON COLUMN "public"."config_property"."remark" IS '备注';
+
+COMMENT ON COLUMN "public"."config_property"."update_time" IS '更新时间';
+
+COMMENT ON COLUMN "public"."config_property"."group_name" IS '组名';
+
+COMMENT ON TABLE "public"."config_property" IS '配置属性表';
+        </sql>
+    </changeSet>
+    <changeSet id="20260226-0002" author="张俊">
+        <sql>
+            CREATE TABLE "public"."file_detail" (
+                                                    "id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+                                                    "url" varchar(4000) COLLATE "pg_catalog"."default" NOT NULL,
+                                                    "size" int8,
+                                                    "filename" varchar(256) COLLATE "pg_catalog"."default",
+                                                    "original_filename" varchar(256) COLLATE "pg_catalog"."default",
+                                                    "base_path" varchar(256) COLLATE "pg_catalog"."default",
+                                                    "path" varchar(256) COLLATE "pg_catalog"."default",
+                                                    "ext" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "content_type" varchar(128) COLLATE "pg_catalog"."default",
+                                                    "platform" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "th_url" varchar(512) COLLATE "pg_catalog"."default",
+                                                    "th_filename" varchar(256) COLLATE "pg_catalog"."default",
+                                                    "th_size" int8,
+                                                    "th_content_type" varchar(128) COLLATE "pg_catalog"."default",
+                                                    "object_id" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "object_type" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "metadata" text COLLATE "pg_catalog"."default",
+                                                    "user_metadata" text COLLATE "pg_catalog"."default",
+                                                    "th_metadata" text COLLATE "pg_catalog"."default",
+                                                    "th_user_metadata" text COLLATE "pg_catalog"."default",
+                                                    "attr" text COLLATE "pg_catalog"."default",
+                                                    "file_acl" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "th_file_acl" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "hash_info" text COLLATE "pg_catalog"."default",
+                                                    "upload_id" varchar(128) COLLATE "pg_catalog"."default",
+                                                    "upload_status" int4,
+                                                    "create_time" timestamp(6),
+                                                    CONSTRAINT "file_detail_pkey" PRIMARY KEY ("id")
+            )
+            ;
+
+            ALTER TABLE "public"."file_detail"
+                OWNER TO "postgres";
+
+            CREATE INDEX "idx_file_detail_create_time" ON "public"."file_detail" USING btree (
+                "create_time" "pg_catalog"."timestamp_ops" ASC NULLS LAST
+                );
+
+            CREATE INDEX "idx_file_detail_object_id" ON "public"."file_detail" USING btree (
+                "object_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+                );
+
+            CREATE INDEX "idx_file_detail_object_type" ON "public"."file_detail" USING btree (
+                "object_type" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+                );
+
+            CREATE INDEX "idx_file_detail_upload_id" ON "public"."file_detail" USING btree (
+                "upload_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+                );
+
+            CREATE INDEX "idx_file_detail_url" ON "public"."file_detail" USING btree (
+                "url" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+                );
+
+            CREATE INDEX "path_object_type" ON "public"."file_detail" USING btree (
+                "path" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST,
+                "object_type" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+                );
+
+            COMMENT ON COLUMN "public"."file_detail"."id" IS '文件id';
+
+COMMENT ON COLUMN "public"."file_detail"."url" IS '文件访问地址';
+
+COMMENT ON COLUMN "public"."file_detail"."size" IS '文件大小，单位字节';
+
+COMMENT ON COLUMN "public"."file_detail"."filename" IS '文件名称';
+
+COMMENT ON COLUMN "public"."file_detail"."original_filename" IS '原始文件名';
+
+COMMENT ON COLUMN "public"."file_detail"."base_path" IS '基础存储路径';
+
+COMMENT ON COLUMN "public"."file_detail"."path" IS '存储路径';
+
+COMMENT ON COLUMN "public"."file_detail"."ext" IS '文件扩展名';
+
+COMMENT ON COLUMN "public"."file_detail"."content_type" IS 'MIME类型';
+
+COMMENT ON COLUMN "public"."file_detail"."platform" IS '存储平台';
+
+COMMENT ON COLUMN "public"."file_detail"."th_url" IS '缩略图访问路径';
+
+COMMENT ON COLUMN "public"."file_detail"."th_filename" IS '缩略图名称';
+
+COMMENT ON COLUMN "public"."file_detail"."th_size" IS '缩略图大小，单位字节';
+
+COMMENT ON COLUMN "public"."file_detail"."th_content_type" IS '缩略图MIME类型';
+
+COMMENT ON COLUMN "public"."file_detail"."object_id" IS '文件所属对象id';
+
+COMMENT ON COLUMN "public"."file_detail"."object_type" IS '文件所属对象类型，例如用户头像，评价图片';
+
+COMMENT ON COLUMN "public"."file_detail"."metadata" IS '文件元数据';
+
+COMMENT ON COLUMN "public"."file_detail"."user_metadata" IS '文件用户元数据';
+
+COMMENT ON COLUMN "public"."file_detail"."th_metadata" IS '缩略图元数据';
+
+COMMENT ON COLUMN "public"."file_detail"."th_user_metadata" IS '缩略图用户元数据';
+
+COMMENT ON COLUMN "public"."file_detail"."attr" IS '附加属性';
+
+COMMENT ON COLUMN "public"."file_detail"."file_acl" IS '文件ACL';
+
+COMMENT ON COLUMN "public"."file_detail"."th_file_acl" IS '缩略图文件ACL';
+
+COMMENT ON COLUMN "public"."file_detail"."hash_info" IS '哈希信息';
+
+COMMENT ON COLUMN "public"."file_detail"."upload_id" IS '上传ID，仅在手动分片上传时使用';
+
+COMMENT ON COLUMN "public"."file_detail"."upload_status" IS '上传状态，仅在手动分片上传时使用，1：初始化完成，2：上传完成';
+
+COMMENT ON COLUMN "public"."file_detail"."create_time" IS '创建时间';
+
+COMMENT ON TABLE "public"."file_detail" IS '文件记录表';
+        </sql>
+    </changeSet>
+    <changeSet id="20260226-0003" author="张俊">
+   <sql>
+       CREATE TABLE "public"."file_part_detail" (
+                                                    "id" varchar(32) COLLATE "pg_catalog"."default" NOT NULL,
+                                                    "platform" varchar(32) COLLATE "pg_catalog"."default",
+                                                    "upload_id" varchar(128) COLLATE "pg_catalog"."default",
+                                                    "e_tag" varchar(255) COLLATE "pg_catalog"."default",
+                                                    "part_number" int4,
+                                                    "part_size" int8,
+                                                    "hash_info" text COLLATE "pg_catalog"."default",
+                                                    "create_time" timestamp(6),
+                                                    CONSTRAINT "file_part_detail_pkey" PRIMARY KEY ("id")
+       )
+       ;
+
+       ALTER TABLE "public"."file_part_detail"
+           OWNER TO "postgres";
+
+       CREATE INDEX "idx_file_part_detail_platform" ON "public"."file_part_detail" USING btree (
+           "platform" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+           );
+
+       CREATE INDEX "idx_file_part_detail_upload_id" ON "public"."file_part_detail" USING btree (
+           "upload_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+           );
+
+       COMMENT ON COLUMN "public"."file_part_detail"."id" IS '分片id';
+
+COMMENT ON COLUMN "public"."file_part_detail"."platform" IS '存储平台';
+
+COMMENT ON COLUMN "public"."file_part_detail"."upload_id" IS '上传ID，仅在手动分片上传时使用';
+
+COMMENT ON COLUMN "public"."file_part_detail"."e_tag" IS '分片 ETag';
+
+COMMENT ON COLUMN "public"."file_part_detail"."part_number" IS '分片号。每一个上传的分片都有一个分片号，一般情况下取值范围是1~10000';
+
+COMMENT ON COLUMN "public"."file_part_detail"."part_size" IS '文件大小，单位字节';
+
+COMMENT ON COLUMN "public"."file_part_detail"."hash_info" IS '哈希信息';
+
+COMMENT ON COLUMN "public"."file_part_detail"."create_time" IS '创建时间';
+
+COMMENT ON TABLE "public"."file_part_detail" IS '文件分片信息表，仅在手动分片上传时使用';
+   </sql>
+    </changeSet>
+
+    <changeSet id="20260312-0001" author="张俊">
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <not>
+                <tableExists tableName="tgwc_layer_info"/>
+            </not>
+        </preConditions>
+        <sql >
+            CREATE TABLE "public"."tgwc_layer_info" (
+                                                        "id" varchar(32) COLLATE "pg_catalog"."default" NOT NULL,
+                                                        "layer_name" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "wkid" int4,
+                                                        "arc_layer_type" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "tiling_scheme" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "tile_cache_path" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "group_id" varchar(32) COLLATE "pg_catalog"."default",
+                                                        "sort_key" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "enable_is" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "preview_url" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "minx" numeric(255,0),
+                                                        "miny" numeric(255,0),
+                                                        "maxx" numeric(255,0),
+                                                        "maxy" numeric(255,0),
+                                                        "storage_format" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "time_create" timestamptz(6),
+                                                        "tile_origin" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "dpi" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "hex_zoom" varchar(255) COLLATE "pg_catalog"."default",
+                                                        "the_geom" geometry(GEOMETRY),
+                                                        CONSTRAINT "tgwc_layer_info_pkey" PRIMARY KEY ("id")
+            )
+            ;
+
+            ALTER TABLE "public"."tgwc_layer_info"
+                OWNER TO "postgres";
+
+            COMMENT ON COLUMN "public"."tgwc_layer_info"."id" IS '主键';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."layer_name" IS '图层名称';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."wkid" IS '坐标系';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."arc_layer_type" IS 'arcgis图层类型';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."tiling_scheme" IS '瓦片配置文件';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."tile_cache_path" IS '瓦片地址';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."group_id" IS '组id';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."sort_key" IS '排序键';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."enable_is" IS '是否启用有效';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."preview_url" IS '预览地址';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."minx" IS 'BoundingBox';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."miny" IS 'BoundingBox';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."maxx" IS 'BoundingBox';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."maxy" IS 'BoundingBox';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."storage_format" IS '切片规范';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."time_create" IS '创建时间';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."tile_origin" IS '切片方案中心店';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."dpi" IS '切片方案分辨率';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."hex_zoom" IS '一个参数';
+
+COMMENT ON COLUMN "public"."tgwc_layer_info"."the_geom" IS '边界范围';
+
+COMMENT ON TABLE "public"."tgwc_layer_info" IS '图层信息表';
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="20260312-0002" author="张俊">
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <not>
+                <tableExists tableName="tgwc_layer_group"/>
+            </not>
+        </preConditions>
+ <sql>
+     CREATE TABLE "public"."tgwc_layer_group" (
+                                                  "id" varchar(32) COLLATE "pg_catalog"."default" NOT NULL,
+                                                  "group_name" varchar(255) COLLATE "pg_catalog"."default",
+                                                  "time_create" timestamp(6),
+                                                  "preview_url" varchar(255) COLLATE "pg_catalog"."default",
+                                                  CONSTRAINT "tgwc_layer_group_pkey" PRIMARY KEY ("id")
+     )
+     ;
+
+     ALTER TABLE "public"."tgwc_layer_group"
+         OWNER TO "postgres";
+
+     COMMENT ON COLUMN "public"."tgwc_layer_group"."id" IS '主键';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group"."group_name" IS '图层组名称';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group"."time_create" IS '创建时间';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group"."preview_url" IS '默认预览地址';
+
+COMMENT ON TABLE "public"."tgwc_layer_group" IS '图层组';
+ </sql>
+    </changeSet>
+
+    <changeSet id="20260312-0003" author="张俊">
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <not>
+                <tableExists tableName="tgwc_layer_group_alias"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE "public"."tgwc_layer_group_alias" (
+                                                               "id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+                                                               "layer_group_alias" varchar(255) COLLATE "pg_catalog"."default",
+                                                               "layer_string" varchar(2000) COLLATE "pg_catalog"."default",
+                                                               "remark" varchar(255) COLLATE "pg_catalog"."default",
+                                                               "wmts_url" varchar(255) COLLATE "pg_catalog"."default",
+                                                               CONSTRAINT "tgwc_layer_group_alias_pkey" PRIMARY KEY ("id")
+            )
+            ;
+
+            ALTER TABLE "public"."tgwc_layer_group_alias"
+                OWNER TO "postgres";
+
+            COMMENT ON COLUMN "public"."tgwc_layer_group_alias"."id" IS '主键';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group_alias"."layer_group_alias" IS '图层组别名';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group_alias"."layer_string" IS '图层排序字符串';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group_alias"."remark" IS '备注';
+
+COMMENT ON COLUMN "public"."tgwc_layer_group_alias"."wmts_url" IS 'wmts的访问地址';
+
+COMMENT ON TABLE "public"."tgwc_layer_group_alias" IS '图层组别名表';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,12 @@
+mybatis:
+  mapper-locations: classpath*:cn/geoair/**/mapper/**/impl/*.xml
+  type-aliases-package: com.gtc.**.model.**.entity
+  type-handlers-package: cn.geoair.geoairteam.gwc.wcs.handler
+
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

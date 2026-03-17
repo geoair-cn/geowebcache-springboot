@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gwcConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns="http://geowebcache.org/schema/1.20.0"
+                  xsi:schemaLocation="http://geowebcache.org/schema/1.20.0 http://geowebcache.org/schema/1.20.0/geowebcache.xsd">
+    <version>1.8.0</version>
+    <backendTimeout>120</backendTimeout>
+    <serviceInformation>
+        <title>GeoWebCache</title>
+        <description>GeoWebCache 是用于 WMS 服务器的高级切片缓存。它支持多种协议和格式，包括 WMS-C、WMTS、KML、谷歌地图和虚拟地球。</description>
+        <keywords>
+            <string>WFS</string>
+            <string>WMS</string>
+            <string>WMTS</string>
+            <string>GEOWEBCACHE</string>
+        </keywords>
+        <serviceProvider>
+            <providerName>geoairTeam</providerName>
+            <providerSite>http://www.geoair.com</providerSite>
+            <serviceContact>
+                <individualName>geoairTeam</individualName>
+                <positionName>team</positionName>
+                <addressType>Work</addressType>
+                <addressStreet>天安门</addressStreet>
+                <addressCity>北京</addressCity>
+                <addressAdministrativeArea>中国大陆</addressAdministrativeArea>
+                <addressPostalCode>101399</addressPostalCode>
+                <addressCountry>中国</addressCountry>
+                <phoneNumber>+86 110112119</phoneNumber>
+                <faxNumber>+86 110112119</faxNumber>
+                <addressEmail>sales@geoair·.com</addressEmail>
+            </serviceContact>
+        </serviceProvider>
+        <fees>NONE</fees>
+        <accessConstraints>NONE</accessConstraints>
+    </serviceInformation>
+
+    <blobStores>
+        <!-- 示例文件 blob 存储配置。启用并设置为默认值以覆盖缓存目录的旧查找方法  -->
+        <FileBlobStore default="false">
+            <id>defaultCache</id>
+            <enabled>false</enabled>
+            <baseDirectory>/tmp/defaultCache</baseDirectory>
+            <fileSystemBlockSize>4096</fileSystemBlockSize>
+        </FileBlobStore>
+
+        <!-- A sample Swift blob store configuration.
+        <SwiftBlobStore default="true">
+            <id>ObjectStorageCache</id>
+            <enabled>true</enabled>
+            <container>put-your-actual-container-name-here</container>
+            <prefix>test-cache</prefix>
+            <endpoint>endpoint</endpoint>
+            <provider>openstack-swift</provider>
+            <region>put-region-here</region>
+            <keystoneVersion>3</keystoneVersion>
+            <keystoneScope>project</keystoneScope>
+            <keystoneDomainName>Default</keystoneDomainName>
+            <identity>tenant-name-here:put-username-here</identity>
+            <password>put-password-here</password>
+        </SwiftBlobStore> -->
+
+        <!-- A sample AWS S3 blob store configuration.   -->
+        <!--
+        <S3BlobStore>
+          <id>myS3Cache</id>
+          <enabled>false</enabled>
+          <bucket>put-your-actual-bucket-name-here</bucket>
+          <prefix>test-cache</prefix>
+          <awsAccessKey>putYourActualAccessKeyHere</awsAccessKey>
+          <awsSecretKey>putYourActualSecretKeyHere</awsSecretKey>
+          <maxConnections>50</maxConnections>
+          <useHTTPS>true</useHTTPS>
+          <proxyDomain></proxyDomain>
+          <proxyWorkstation></proxyWorkstation>
+          <proxyHost></proxyHost>
+          <proxyPort></proxyPort>
+          <proxyUsername></proxyUsername>
+          <proxyPassword></proxyPassword>
+          <useGzip>true</useGzip>
+        </S3BlobStore>
+         -->
+        <!-- A sample MBTiles blob store configuration.   -->
+        <!--
+        <MbtilesBlobStore default="true">
+          <id>mbtiles-store</id>
+          <enabled>true</enabled>
+          <rootDirectory>/tmp/gwc-mbtiles</rootDirectory>
+          <templatePath>{layer}{grid}{format}{params}/{z}-{x}-{y}.sqlite</templatePath>
+          <poolSize>1000</poolSize>
+          <poolReaperIntervalMs>500</poolReaperIntervalMs>
+          <rowRangeCount>250</rowRangeCount>
+          <columnRangeCount>250</columnRangeCount>
+          <eagerDelete>false</eagerDelete>
+          <useCreateTime>true</useCreateTime>
+          <executorConcurrency>5</executorConcurrency>
+          <mbtilesMetadataDirectory>/tmp/gwc-mbtiles/layersMetadata</mbtilesMetadataDirectory>
+        </MbtilesBlobStore>
+        -->
+
+    </blobStores>
+
+    <gridSets>
+        <!-- Grid Set 示例，默认定义了EPSG:900913和EPSG:4326 -->
+        <gridSet>
+            <name>EPSG:2163</name>
+            <srs>
+                <number>2163</number>
+            </srs>
+            <extent>
+                <coords>
+                    <double>-2495667.977678598</double>
+                    <double>-2223677.196231552</double>
+                    <double>3291070.6104286816</double>
+                    <double>959189.3312465074</double>
+                </coords>
+            </extent>
+            <scaleDenominators>
+                <double>25000000</double>
+                <double>1000000</double>
+                <double>100000</double>
+                <double>25000</double>
+            </scaleDenominators>
+            <tileHeight>200</tileHeight>
+            <tileWidth>200</tileWidth>
+        </gridSet>
+        <gridSet>
+            <name>CanadaAtlasNonotree</name>
+            <srs>
+                <number>3979</number>
+            </srs>
+            <extent>
+                <coords>
+                    <double>-2441613</double>
+                    <double>-861451</double>
+                    <double>3176326</double>
+                    <double>3969977</double>
+                </coords>
+            </extent>
+            <resolutions>
+                <double>21945.0742188</double>
+                <double>7315.02473958</double>
+                <double>2438.34157986</double>
+                <double>812.78052662</double>
+                <double>270.926842207</double>
+            </resolutions>
+        </gridSet>
+    </gridSets>
+
+    <layers>
+
+        <wmsLayer>
+            <!--
+            <blobStoreId>myS3Cache</blobStoreId>
+            -->
+            <name>topp:states</name>
+            <mimeFormats>
+                <string>image/gif</string>
+                <string>image/jpeg</string>
+                <string>image/png</string>
+                <string>image/png8</string>
+            </mimeFormats>
+            <gridSubsets>
+                <gridSubset>
+                    <gridSetName>EPSG:4326</gridSetName>
+                    <extent>
+                        <coords>
+                            <double>-129.6</double>
+                            <double>3.45</double>
+                            <double>-62.1</double>
+                            <double>70.9</double>
+                        </coords>
+                    </extent>
+                </gridSubset>
+                <gridSubset>
+                    <gridSetName>EPSG:2163</gridSetName>
+                </gridSubset>
+            </gridSubsets>
+            <parameterFilters>
+                <stringParameterFilter>
+                    <key>STYLES</key>
+                    <defaultValue>population</defaultValue>
+                    <values>
+                        <string>population</string>
+                        <string>polygon</string>
+                        <string>pophatch</string>
+                    </values>
+                </stringParameterFilter>
+            </parameterFilters>
+            <wmsUrl>
+                <!--
+            代理的wms服务地址
+            -->
+                <string>https://demo.boundlessgeo.com/geoserver/topp/wms</string>
+            </wmsUrl>
+            <legends defaultWidth="81" defaultHeight="80" defaultFormat="image/png">
+                <legend style="population"/>
+                <legend style="pophatch"/>
+                <legend style="polygon">
+                    <width>20</width>
+                    <height>20</height>
+                </legend>
+            </legends>
+        </wmsLayer>
+
+        <wmsLayer>
+            <name>raster test layer</name>
+            <mimeFormats>
+                <string>image/gif</string>
+                <string>image/jpeg</string>
+                <string>image/png</string>
+                <string>image/png8</string>
+            </mimeFormats>
+            <gridSubsets>
+                <gridSubset>
+                    <gridSetName>EPSG:4326</gridSetName>
+                </gridSubset>
+                <gridSubset>
+                    <gridSetName>CanadaAtlasNonotree</gridSetName>
+                </gridSubset>
+            </gridSubsets>
+            <wmsUrl>
+                <string>https://demo.boundlessgeo.com/geoserver/wms</string>
+            </wmsUrl>
+            <wmsLayers>nasa:bluemarble</wmsLayers>
+            <legends defaultWidth="20" defaultHeight="20" defaultFormat="image/png">
+                <legend style=""/>
+            </legends>
+        </wmsLayer>
+
+        <wmsLayer>
+            <name>img states</name>
+            <metaInformation>
+                <title>Nicer title for Image States</title>
+                <description>This is a description. Fascinating.</description>
+            </metaInformation>
+            <mimeFormats>
+                <string>image/gif</string>
+                <string>image/jpeg</string>
+                <string>image/png</string>
+                <string>image/png8</string>
+            </mimeFormats>
+            <!-- Grid Subset Example -->
+            <gridSubsets>
+                <gridSubset>
+                    <gridSetName>EPSG:4326</gridSetName>
+                    <extent>
+                        <coords>
+                            <double>-129.6</double>
+                            <double>3.45</double>
+                            <double>-62.1</double>
+                            <double>70.9</double>
+                        </coords>
+                    </extent>
+                </gridSubset>
+            </gridSubsets>
+            <expireCacheList>
+                <expirationRule minZoom="0" expiration="60"/>
+            </expireCacheList>
+            <expireClientsList>
+                <expirationRule minZoom="0" expiration="500"/>
+            </expireClientsList>
+            <wmsUrl>
+                <string>https://demo.boundlessgeo.com/geoserver/wms</string>
+            </wmsUrl>
+            <wmsLayers>nurc:Img_Sample,topp:states</wmsLayers>
+            <transparent>false</transparent>
+            <bgColor>0x0066FF</bgColor>
+            <legends defaultWidth="81" defaultHeight="80" defaultFormat="image/png">
+                <legend style="population"/>
+                <legend style="pophatch"/>
+                <legend style="polygon">
+                    <width>20</width>
+                    <height>20</height>
+                    <minScale>5000</minScale>
+                    <maxScale>10000</maxScale>
+                </legend>
+                <legend style="raster">
+                    <width>20</width>
+                    <height>20</height>
+                </legend>
+            </legends>
+        </wmsLayer>
+
+        <!-- GeoAir封装的 arcgis切片geowecache代理，可以使用天地图代理方式
+          1. name：图层名称 注意只能是字母
+          2. sortkey: 排序的键
+          3 tilingScheme：arcgis切片的 conf.xml的路径
+          4 tileCachePath：切片所在的位置
+          5 group ：所在的 组  注意只能是字母
+           6 remark ：备注信息 组内多个的备注只取第一个
+
+          请求方式：
+          1 组的请求方式： 这里的示例是 点线面 上下叠加成一个图层进行发布，也可以进行横向拼接（影像切蛋糕的方式进行切图，我们服务端进行拼接蛋糕）
+          http://192.168.0.110:12307/geowebcache/geoair/group/0929:1_2_3/wmts
+           解释： geowebcache：是的部署在tomcat的时候war包的名字，如果你改成了 其他名字就是你定义的名字
+           geoair：GeoAir封装接口的统一前缀
+           group：代表是组的请求方式
+           0929:1_2_3：这里对应的是图层名称 ，这里的图层名称 0929对应的是组名，1_2_3 对应的是sortkey的排序，表示 dian图层叠加在最下面，xiang
+           图层叠加在最上面。
+           wmts： 服务请求方式
+           2 单图层的请求方式：单独请求一个点图层，或者是线图层，或者是你蛋糕的某一块，具体看你在 配置文件里面的配置
+           http://192.168.0.110:12307/geowebcache/geoair/layer/dian/wmts
+           layer：表示请求的是单图层
+            dian ：表示的是请求的 dian这个图层。
+           该封装支持 getcapabilities 方法 请求示例
+           http://192.168.0.110:12307/geowebcache/geoair/group/0929:1_2_3/wmts?REQUEST=getcapabilities
+            http://192.168.0.110:12307/geowebcache/geoair/layer/dian/wmts?REQUEST=getcapabilities
+          -->
+
+        <!--
+        <tc-arcgisLayer>
+            <name>dian</name>
+            <sortkey>1</sortkey>
+            <tilingScheme>F:\44900929\44900929\44900929\点\layer\Conf.xml</tilingScheme>
+            <tileCachePath>F:\44900929\44900929\44900929\点\layer\_alllayers</tileCachePath>
+            <hexZoom>false</hexZoom>
+            <group>jingdian</group>
+            <remark>我是备注</remark>
+        </tc-arcgisLayer>
+
+        <tc-arcgisLayer>
+            <name>main</name>
+            <sortkey>2</sortkey>
+            <tilingScheme>F:\44900929\44900929\44900929\面\layer\Conf.xml</tilingScheme>
+            <tileCachePath>F:\44900929\44900929\44900929\面\layer\_alllayers</tileCachePath>
+            <hexZoom>false</hexZoom>
+            <group>jingdian</group>
+                <remark>我是备注</remark>
+        </tc-arcgisLayer>
+
+        <tc-arcgisLayer>
+            <name>xiang</name>
+            <sortkey>3</sortkey>
+            <tilingScheme>F:\44900929\44900929\44900929\线\layer\Conf.xml</tilingScheme>
+            <tileCachePath>F:\44900929\44900929\44900929\线\layer\_alllayers</tileCachePath>
+            <hexZoom>false</hexZoom>
+            <group>jingdian</group>
+         <remark>我是备注</remark>
+        </tc-arcgisLayer>
+        -->
+
+        <!-- GeoAir封装的 谷歌tms切片使用wmts方式加载
+           1. name：图层名称 注意只能是字母
+           2. sortkey: 排序的键
+           3 loadMethod：加载方式 只有两种加载方式  一种是 http ，一种是 local ，两种方式对应的是两种请求方式，
+           第一种是 瓦片部署在 其他的 服务器，我们的geowebcache只做http代理，另一种是瓦片部署在geowebcache所在的服务器，geowebcache使用读取图片的方式进行上图
+           4 localPath：切片所在的位置
+           5 httpPath：切片远程所在的位置
+           6 group ：所在的 组  注意只能是字母
+           7 format ：瓦片的后缀
+
+
+           请求方式：
+           该封装暂时只支持单图层的请求方式，请求url示例
+            http://192.168.0.110:12307/geowebcache/geoair/xyz/111113-local/wmts
+            xyz：代表数据源是 xyz的方式
+            111113：代表请求的是 111113这个图层
+
+       只要是你的切片是按照谷歌切片方案进行切图的，这里就可以进行使用wmts方式进行加载
+        代码示例
+        layer: "111113-local",
+        matrixSet: "C",//随意写，因为这个参数对于xyz的请求而言是无意义的
+        url: "http://192.168.0.110:12307/geowebcache/geoair/xyz/111113-local/wmts",
+        projection: "EPSG:3857",
+        maxResolution: "156543.03392800014",  //  谷歌标准切片方案的分辨率
+        level: 19,
+        origin: [-20037508.342787001, 20037508.342787001],  //  谷歌标准切片方案的切片原点
+        extent: ol.proj.get('EPSG:3857').getExtent(), // 谷歌标准切片方案的地图边界范围
+           -->
+
+        <tc-tmsLayer>
+            <name>111113-local</name>
+            <sortkey>3</sortkey>
+            <loadMethod>local</loadMethod>
+            <localPath>E:\nginx_pxy\0909-qubaibain-xianshu-qubaitu-1.0\{z}\{x}\{y}.png</localPath>
+            <group>demo-hgt</group>
+        </tc-tmsLayer>
+
+
+        <tc-tmsLayer>
+            <name>zhongguo</name>
+            <sortkey>1</sortkey>
+            <loadMethod>http</loadMethod>
+            <httpPath>http://wuhan.geoair.com.cn:9054/zhongguo0-12/{z}/{x}/{y}.jpg</httpPath>
+            <format>jpg</format>
+            <group>demo-zhongguo</group>
+        </tc-tmsLayer>
+
+        <tc-xyzLayer>
+            <name>jingdian</name>
+            <sortkey>1</sortkey>
+            <loadMethod>http</loadMethod>
+            <httpPath>http://wuhan.geoair.com.cn:9054/2024map/beijing/jingdian/{z}/{y}/{x}.png</httpPath>
+            <format>png</format>
+            <group>demo-jingdian</group>
+        </tc-xyzLayer>
+    </layers>
+
+</gwcConfiguration>

@@ -1,0 +1,95 @@
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<web-app>
+    <display-name>GeoWebCache</display-name>
+
+    <!-- pick up all spring application contexts -->
+    <context-param>
+        <param-name>GEOWEBCACHE_CACHE_DIR</param-name>
+        <param-value>/gwcCache/GEOWEBCACHE_CACHE_DIR</param-value>
+<!--        <param-value>H:\GWC测试数据\geoserverCache_testTms</param-value>-->
+    </context-param>
+    <context-param>
+        <param-name>GTC_CACHE_DIR</param-name>
+<!--        <param-value>H:\GWC测试数据\gtcCache</param-value>-->
+        <param-value>/gwcCache/GTC_CACHE_DIR</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/geowebcache-servlet.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>logbackConfigLocation</param-name>
+        <param-value>classpath:logback-spring.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+    </listener>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>
+            org.springframework.web.filter.DelegatingFilterProxy
+        </filter-class>
+    </filter>
+
+<!--    <filter>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.origins</param-name>-->
+<!--            <param-value>*</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.methods</param-name>-->
+<!--            <param-value>GET,POST,HEAD,OPTIONS,PUT</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.allowed.headers</param-name>-->
+<!--            <param-value>-->
+<!--                Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers-->
+<!--            </param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.exposed.headers</param-name>-->
+<!--            <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.support.credentials</param-name>-->
+<!--            <param-value>true</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>cors.preflight.maxage</param-name>-->
+<!--            <param-value>10</param-value>-->
+<!--        </init-param>-->
+<!--    </filter>-->
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+<!--    <filter-mapping>-->
+<!--        <filter-name>CorsFilter</filter-name>-->
+<!--        <url-pattern>/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+    <!--  spring context loader -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- spring dispatcher servlet, dispatches incoming requests to controllers -->
+    <servlet>
+        <servlet-name>geowebcache</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>geowebcache</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>geowebcache</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+</web-app>

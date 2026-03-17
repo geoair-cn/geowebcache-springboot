@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <!--设置系统日志目录-->
+    <property name="LogPath" value="logs"/>
+    <property name="App" value="tcwmts-wcs"/>
+
+<!--    <property name="file_log_pattern"-->
+<!--              value=-->
+<!--                      "%highlight(%d{yyyy-MM-dd HH:mm:ss.SSS}) %highlight(%-5level) %highlight(-&#45;&#45; %thread) %cyan(%logger{39}) \t: %highlight(%msg%n)"/>-->
+       <property name="file_log_pattern"
+              value=
+                      "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+
+
+        <appender name="LogError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LogPath}/${App}/log_error.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LogPath}/${App}/history/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <!-- 保存 30 天的历史日志,当程序结束时会自动删�? -->
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <!-- 追加方式记录日志 -->
+            <append>true</append>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${file_log_pattern}</pattern>
+                <charset>utf-8</charset>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>error</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+        <appender name="LogWarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LogPath}/${App}/log_warn.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LogPath}/${App}/history/log-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <append>true</append>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${file_log_pattern}</pattern>
+                <charset>utf-8</charset>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>warn</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+        <appender name="LogInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LogPath}/${App}/log_info.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 归档的日志文件的路径，例如今天是2013-12-21日志，当前写的日志文件路径为file节点指定，可以将此文件与file指定文件路径设置为不同路径，从�?�将当前日志文件或归档日志文件置不同的目录�??
+                �?2013-12-21的日志文件在由fileNamePattern指定�?%d{yyyy-MM-dd}指定日期格式�?%i指定索引 -->
+                <fileNamePattern>${LogPath}/${App}/history/log-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>5MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <append>true</append>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${file_log_pattern}</pattern>
+                <charset>utf-8</charset>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>info</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+        <appender name="LogConsole" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LogPath}/${App}/console.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LogPath}/${App}/console-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>10MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>2</maxHistory>
+            </rollingPolicy>
+            <append>true</append>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>${file_log_pattern}</pattern>
+                <charset>utf-8</charset>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>DEBUG</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>ACCEPT</onMismatch>
+            </filter>
+        </appender>
+
+    <property name="console_log_pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${console_log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="com.gtc" level="DEBUG"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.context" level="WARN"/>
+    <logger name="org.springframework.boot" level="WARN"/>
+    <logger name="org.springframework.boot.actuate" level="WARN"/>
+    <logger name="org.springframework.boot.autoconfigure" level="WARN"/>
+
+    <logger name="org.I0Itec" level="WARN"/>
+    <logger name="tk.mybatis" level="WARN"/>
+
+
+
+
+    <!-- 测试环境/验证环境/生产环境 -->
+
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="LogConsole"/>
+            <appender-ref ref="LogInfo"/>
+            <appender-ref ref="LogWarn"/>
+            <appender-ref ref="LogError"/>
+        </root>
+
+
+</configuration>

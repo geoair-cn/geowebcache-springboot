@@ -1,0 +1,33 @@
+spring: 
+    resources: 
+       static-locations: file:ucs_h5
+    aop: 
+       proxy-target-class: false
+    profiles:
+        active: config-${package.environment},${package.environment}
+        include: dao
+    session:
+      store-type: redis
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
+            enabled: true
+    thymeleaf:
+      prefix: classpath:/templates/
+      check-template-location: true
+      suffix: .html
+      encoding: UTF-8
+      servlet:
+        content-type: text/html; charset=utf-8
+      cache: false
+dierx:
+    redis:
+        open: true
+
+
+logging:
+   config: classpath:logback-spring.xml
+   
+gtc:
+   profile: ${package.environment} 

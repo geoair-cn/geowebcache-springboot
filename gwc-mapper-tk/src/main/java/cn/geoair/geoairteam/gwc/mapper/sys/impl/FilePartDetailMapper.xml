@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.geoair.geoairteam.gwc.mapper.sys.FilePartDetailMapper">
+
+    <sql id="tableName">
+        file_part_detail
+    </sql>
+
+    <sql id="condition">
+        <if test="param.id != null and param.id != ''">
+            AND file_part_detail.id = #{param.id}
+        </if>
+        <if test="param.platform != null and param.platform != ''">
+            AND file_part_detail.platform = #{param.platform}
+        </if>
+        <if test="param.uploadId != null and param.uploadId != ''">
+            AND file_part_detail.upload_id = #{param.uploadId}
+        </if>
+        <if test="param.eTag != null and param.eTag != ''">
+            AND file_part_detail.e_tag = #{param.eTag}
+        </if>
+        <if test="param.partNumber != null">
+            AND file_part_detail.part_number = #{param.partNumber}
+        </if>
+        <if test="param.partSize != null">
+            AND file_part_detail.part_size = #{param.partSize}
+        </if>
+        <if test="param.hashInfo != null and param.hashInfo != ''">
+            AND file_part_detail.hash_info = #{param.hashInfo}
+        </if>
+        <if test="param.createTime != null">
+            AND file_part_detail.create_time <![CDATA[>=]]> #{param.createTime,jdbcType=TIMESTAMP}
+            AND file_part_detail.create_time <![CDATA[<=]]> date_add(#{param.createTime,jdbcType=TIMESTAMP}, date_trunc('day', current_date + interval '1 day'))
+        </if>
+
+        <!-- 范围查询 -->
+        <if test="param.partNumberMin != null">
+            AND file_part_detail.part_number <![CDATA[>=]]> #{param.partNumberMin}
+        </if>
+        <if test="param.partNumberMax != null">
+            AND file_part_detail.part_number <![CDATA[<=]]> #{param.partNumberMax}
+        </if>
+        <if test="param.createTimeStart != null">
+            AND file_part_detail.create_time <![CDATA[>=]]> #{param.createTimeStart,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.createTimeEnd != null">
+            AND file_part_detail.create_time <![CDATA[<=]]> #{param.createTimeEnd,jdbcType=TIMESTAMP}
+        </if>
+
+        <!-- 多值查询 -->
+        <if test="param.platforms != null and param.platforms.length > 0">
+            AND file_part_detail.platform IN
+            <foreach collection="param.platforms" item="platform" index="index" open="(" close=")" separator=",">
+                #{platform}
+            </foreach>
+        </if>
+
+        <!-- 模糊查询 -->
+        <if test="param.andQueryContentIn != null and param.andQueryContentIn.length > 0">
+            AND (
+            <foreach collection="param.andQueryContentIn" item="str" index="index" separator=" OR ">
+                row_to_json(file_part_detail)||'' LIKE '%'|| #{str}||'%'
+            </foreach>
+            )
+        </if>
+
+        <!-- ID IN查询 -->
+        <if test="param.andIdsIn != null and param.andIdsIn.length > 0">
+            AND file_part_detail.id IN
+            <foreach collection="param.andIdsIn" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+
+        <!-- ID NOT IN查询 -->
+        <if test="param.andIdsNotIn != null and param.andIdsNotIn.length > 0">
+            AND file_part_detail.id NOT IN
+            <foreach collection="param.andIdsNotIn" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- 留作备用，不用刻意维护 -->
+    <resultMap id="BaseResultMap" type="cn.geoair.geoairteam.gwc.model.sys.dto.FilePartDetailDto">
+    </resultMap>
+
+    <sql id="fieldList">
+        file_part_detail.id,
+        file_part_detail.platform,
+        file_part_detail.upload_id,
+        file_part_detail.e_tag,
+        file_part_detail.part_number,
+        file_part_detail.part_size,
+        file_part_detail.hash_info,
+        file_part_detail.create_time
+    </sql>
+
+    <select id="searchList" resultType="cn.geoair.geoairteam.gwc.model.sys.dto.FilePartDetailDto">
+        SELECT * FROM <include refid="tableName"></include>
+        <where>
+            1 = 1
+            <include refid="condition"></include>
+        </where>
+        ORDER BY file_part_detail.create_time DESC, file_part_detail.part_number ASC
+    </select>
+
+</mapper>

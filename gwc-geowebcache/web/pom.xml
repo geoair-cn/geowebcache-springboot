@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- mvn -Dtest=StorageBrokerTest -Dmaven.test.jvmargs='-XX:+HeapDumpOnOutOfMemoryError -Xms32m -Xmx32m' test -->
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.geoair.geoairteam.gwc</groupId>
+        <artifactId>gwc-geowebcache</artifactId>
+        <version>26.gwc.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <groupId>org.geowebcache</groupId>
+    <artifactId>gwc-web</artifactId>
+    <packaging>jar</packaging>
+    <name>Web module</name>
+    <url>http://geowebcache.org</url>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
+
+        <!--      后引入开始-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>2.0.7</version>
+        </dependency>
+
+        <dependency>
+
+            <groupId>cn.geoair.devkit</groupId>
+            <artifactId>geoair-orm-mybatis-tk</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>5.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-spring</artifactId>
+            <version>0.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-access</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.geoair.geoairteam.gwc</groupId>
+            <artifactId>gwc-mapper-tk</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.geoair.geoairteam.gwc</groupId>
+            <artifactId>gwc-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-juli</artifactId>
+            <version>9.0.64</version>
+            <!-- 根据你的Tomcat版本调整 -->
+        </dependency>
+        <!--    后引入结束-->
+        <!--    <dependency>-->
+        <!--      <groupId>cn.geoair.geoairteam.tcwmts</groupId>-->
+        <!--      <artifactId>tcwmts-simple-service</artifactId>-->
+        <!--    </dependency>-->
+
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-georss</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-gmaps</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-kml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-tms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-ve</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-wms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-wmts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-diskquota-bdb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-diskquota-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-arcgiscache</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--引入GeoAir天地图主键-->
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gtc-tdt-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--    &lt;!&ndash;临时引入跨域&ndash;&gt;-->
+        <!--    <dependency>-->
+        <!--      <groupId>org.eclipse.jetty</groupId>-->
+        <!--      <artifactId>jetty-servlets</artifactId>-->
+        <!--      <version>9.3.0.M2</version>-->
+        <!--    </dependency>-->
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-mbtiles</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.geowebcache</groupId>-->
+<!--            <artifactId>gwc-distributed</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-aws-s3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-sqlite</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-swift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+            <!-- optional>true</optional -->
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gwc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--  Jetty starter dependencies -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--            部署的时候不推包-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>true</inherited>
+                <configuration>
+                    <warName>geowebcache</warName>
+                    <webappDirectory>${project.build.directory}/geowebcache</webappDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.4.14.v20181114</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/geowebcache</contextPath>
+                    </webApp>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <stopPort>9966</stopPort>
+                    <httpConnector>
+                        <port>12308</port>
+                    </httpConnector>
+                    <reload>automatic</reload>
+                    <scanIntervalSeconds>3</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <supportedPackagings>
+                        <supportedPackaging>jar</supportedPackaging>
+                    </supportedPackagings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

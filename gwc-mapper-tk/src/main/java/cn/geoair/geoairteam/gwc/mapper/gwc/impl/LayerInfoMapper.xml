@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.geoair.geoairteam.gwc.mapper.gwc.LayerInfoMapper">
+
+    <sql id="tableName">
+        tgwc_layer_info
+    </sql>
+    <sql id="condition">
+                <if test="param.id != null and param.id != ''">
+                    AND tgwc_layer_info.id = #{param.id}
+                </if>
+                <if test="param.layerName != null and param.layerName != ''">
+                    AND tgwc_layer_info.layer_name = #{param.layerName}
+                </if>
+                <if test="param.wkid != null">
+                    AND tgwc_layer_info.wkid = #{param.wkid}
+                </if>
+                <if test="param.arcLayerType != null and param.arcLayerType != ''">
+                    AND tgwc_layer_info.arc_layer_type = #{param.arcLayerType}
+                </if>
+                <if test="param.tilingScheme != null and param.tilingScheme != ''">
+                    AND tgwc_layer_info.tiling_scheme = #{param.tilingScheme}
+                </if>
+                <if test="param.tileCachePath != null and param.tileCachePath != ''">
+                    AND tgwc_layer_info.tile_cache_path = #{param.tileCachePath}
+                </if>
+                <if test="param.groupId != null and param.groupId != ''">
+                    AND tgwc_layer_info.group_id = #{param.groupId}
+                </if>
+                <if test="param.sortKey != null and param.sortKey != ''">
+                    AND tgwc_layer_info.sort_key = #{param.sortKey}
+                </if>
+                <if test="param.enableIs != null and param.enableIs != ''">
+                    AND tgwc_layer_info.enable_is = #{param.enableIs}
+                </if>
+                <if test="param.previewUrl != null and param.previewUrl != ''">
+                    AND tgwc_layer_info.preview_url = #{param.previewUrl}
+                </if>
+                <if test="param.minx != null">
+                    AND tgwc_layer_info.minx = #{param.minx}
+                </if>
+                <if test="param.miny != null">
+                    AND tgwc_layer_info.miny = #{param.miny}
+                </if>
+                <if test="param.maxx != null">
+                    AND tgwc_layer_info.maxx = #{param.maxx}
+                </if>
+                <if test="param.maxy != null">
+                    AND tgwc_layer_info.maxy = #{param.maxy}
+                </if>
+                <if test="param.storageFormat != null and param.storageFormat != ''">
+                    AND tgwc_layer_info.storage_format = #{param.storageFormat}
+                </if>
+                <if test="param.timeCreate != null and param.timeCreate != ''">
+                    AND tgwc_layer_info.time_create = #{param.timeCreate}
+                </if>
+                <if test="param.tileOrigin != null and param.tileOrigin != ''">
+                    AND tgwc_layer_info.tile_origin = #{param.tileOrigin}
+                </if>
+                <if test="param.dpi != null and param.dpi != ''">
+                    AND tgwc_layer_info.dpi = #{param.dpi}
+                </if>
+                <if test="param.hexZoom != null and param.hexZoom != ''">
+                    AND tgwc_layer_info.hex_zoom = #{param.hexZoom}
+                </if>
+                <if test="param.theGeom != null and param.theGeom != ''">
+                    AND tgwc_layer_info.the_geom = #{param.theGeom}
+                </if>
+
+        <if test="param.andQueryContentIn != null and param.andQueryContentIn.length > 0">
+            AND (
+            <foreach collection="param.andQueryContentIn" item="str" index="index"   >
+                row_to_json(tgwc_layer_info)||'' LIKE '%'|| #{str}||'%'    or
+            </foreach>
+            1!=1 )
+        </if>
+
+                <if test="param.andIdsIn != null and param.andIdsIn.length > 0">
+                    AND tgwc_layer_info.id IN
+                    <foreach collection="param.andIdsIn" item="id" index="index" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+                </if>
+
+                <if test="param.andIdsNotIn != null and param.andIdsNotIn.length > 0 ">
+                    AND tgwc_layer_info.id NOT IN
+                    <foreach collection="param.andIdsNotIn" item="id" index="index" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+                </if>
+
+    </sql>
+
+
+    <sql id="fieldList">
+                 tgwc_layer_info.layer_name,
+                tgwc_layer_info.wkid,
+                tgwc_layer_info.arc_layer_type,
+                tgwc_layer_info.tiling_scheme,
+                tgwc_layer_info.tile_cache_path,
+                tgwc_layer_info.group_id,
+                tgwc_layer_info.sort_key,
+                tgwc_layer_info.enable_is,
+                tgwc_layer_info.preview_url,
+                tgwc_layer_info.minx,
+                tgwc_layer_info.miny,
+                tgwc_layer_info.maxx,
+                tgwc_layer_info.maxy,
+                tgwc_layer_info.storage_format,
+                tgwc_layer_info.time_create,
+                tgwc_layer_info.tile_origin,
+                tgwc_layer_info.dpi,
+                tgwc_layer_info.hex_zoom,
+                tgwc_layer_info.the_geom,
+                tgwc_layer_info.id
+    </sql>
+    <select id="searchList" resultType="cn.geoair.geoairteam.gwc.model.gwc.dto.LayerInfoDto">
+        SELECT * FROM  <include refid="tableName"></include>
+        <where>
+            1 = 1
+            <include refid="condition"></include>
+        </where>
+    </select>
+    <update id="updateBbox">
+        UPDATE "public"."tgwc_layer_info"
+        SET   "the_geom" = ST_MakeEnvelope(minx, miny, maxx, maxy, wkid) WHERE "id" = #{id};
+    </update>
+
+</mapper>

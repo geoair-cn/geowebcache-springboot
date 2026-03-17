@@ -1,0 +1,7 @@
+BoundingBox   这个类保存了很多常用的坐标系的边界信息
+
+
+GridSetFactory   保存一些切片方案的初始化类
+
+
+DefaultGridsets  一些默认的切片方案

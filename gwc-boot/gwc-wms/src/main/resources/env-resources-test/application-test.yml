@@ -1,0 +1,9 @@
+server:
+    servlet:
+       context-path: /ucs
+    port: 8083 
+
+
+logging:
+   level:
+      root: INFO

@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>cn.geoair.geoairteam.gwc</groupId>
+		<artifactId>gir-gwc</artifactId>
+		<version>26.gwc.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>gwc-service</artifactId>
+	<packaging>jar</packaging>
+	<name>gwc-service</name>
+
+	<dependencies>
+
+		<dependency>
+           <groupId>cn.geoair.geoairteam.gwc</groupId>
+           <artifactId>gwc-servface</artifactId>
+			<version>${gwc.version}</version>
+       	</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+       	<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>${hutool.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>cn.geoair.devkit</groupId>
+			<artifactId>geoair-adv-query</artifactId>
+			<version>${geoair.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.geoair.devkit</groupId>
+			<artifactId>geoair-jts-all</artifactId>
+			<version>${geoair.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>${spring-boot.version}</version>
+			<optional>true</optional>
+		</dependency>
+
+	</dependencies>
+
+</project>

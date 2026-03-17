@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.geoair.geoairteam.gwc.mapper.sys.FileDetailMapper">
+
+    <sql id="tableName">
+        file_detail
+    </sql>
+
+    <sql id="condition">
+        <if test="param.id != null and param.id != ''">
+            AND file_detail.id = #{param.id}
+        </if>
+        <if test="param.url != null and param.url != ''">
+            AND file_detail.url = #{param.url}
+        </if>
+        <if test="param.size != null">
+            AND file_detail.size = #{param.size}
+        </if>
+        <if test="param.filename != null and param.filename != ''">
+            AND file_detail.filename = #{param.filename}
+        </if>
+        <if test="param.originalFilename != null and param.originalFilename != ''">
+            AND file_detail.original_filename = #{param.originalFilename}
+        </if>
+        <if test="param.basePath != null and param.basePath != ''">
+            AND file_detail.base_path = #{param.basePath}
+        </if>
+        <if test="param.path != null and param.path != ''">
+            AND file_detail.path = #{param.path}
+        </if>
+        <if test="param.ext != null and param.ext != ''">
+            AND file_detail.ext = #{param.ext}
+        </if>
+        <if test="param.contentType != null and param.contentType != ''">
+            AND file_detail.content_type = #{param.contentType}
+        </if>
+        <if test="param.platform != null and param.platform != ''">
+            AND file_detail.platform = #{param.platform}
+        </if>
+        <if test="param.thUrl != null and param.thUrl != ''">
+            AND file_detail.th_url = #{param.thUrl}
+        </if>
+        <if test="param.thFilename != null and param.thFilename != ''">
+            AND file_detail.th_filename = #{param.thFilename}
+        </if>
+        <if test="param.thSize != null">
+            AND file_detail.th_size = #{param.thSize}
+        </if>
+        <if test="param.thContentType != null and param.thContentType != ''">
+            AND file_detail.th_content_type = #{param.thContentType}
+        </if>
+        <if test="param.objectId != null and param.objectId != ''">
+            AND file_detail.object_id = #{param.objectId}
+        </if>
+        <if test="param.objectType != null and param.objectType != ''">
+            AND file_detail.object_type = #{param.objectType}
+        </if>
+        <if test="param.metadata != null and param.metadata != ''">
+            AND file_detail.metadata = #{param.metadata}
+        </if>
+        <if test="param.userMetadata != null and param.userMetadata != ''">
+            AND file_detail.user_metadata = #{param.userMetadata}
+        </if>
+        <if test="param.thMetadata != null and param.thMetadata != ''">
+            AND file_detail.th_metadata = #{param.thMetadata}
+        </if>
+        <if test="param.thUserMetadata != null and param.thUserMetadata != ''">
+            AND file_detail.th_user_metadata = #{param.thUserMetadata}
+        </if>
+        <if test="param.attr != null and param.attr != ''">
+            AND file_detail.attr = #{param.attr}
+        </if>
+        <if test="param.fileAcl != null and param.fileAcl != ''">
+            AND file_detail.file_acl = #{param.fileAcl}
+        </if>
+        <if test="param.thFileAcl != null and param.thFileAcl != ''">
+            AND file_detail.th_file_acl = #{param.thFileAcl}
+        </if>
+        <if test="param.hashInfo != null and param.hashInfo != ''">
+            AND file_detail.hash_info = #{param.hashInfo}
+        </if>
+        <if test="param.uploadId != null and param.uploadId != ''">
+            AND file_detail.upload_id = #{param.uploadId}
+        </if>
+        <if test="param.uploadStatus != null">
+            AND file_detail.upload_status = #{param.uploadStatus}
+        </if>
+        <if test="param.createTime != null">
+            AND file_detail.create_time <![CDATA[>=]]> #{param.createTime,jdbcType=TIMESTAMP}
+            AND file_detail.create_time <![CDATA[<=]]> date_add(#{param.createTime,jdbcType=TIMESTAMP}, date_trunc('day', current_date + interval '1 day'))
+        </if>
+
+        <!-- 范围查询 -->
+        <if test="param.sizeMin != null">
+            AND file_detail.size <![CDATA[>=]]> #{param.sizeMin}
+        </if>
+        <if test="param.sizeMax != null">
+            AND file_detail.size <![CDATA[<=]]> #{param.sizeMax}
+        </if>
+        <if test="param.createTimeStart != null">
+            AND file_detail.create_time <![CDATA[>=]]> #{param.createTimeStart,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.createTimeEnd != null">
+            AND file_detail.create_time <![CDATA[<=]]> #{param.createTimeEnd,jdbcType=TIMESTAMP}
+        </if>
+
+        <!-- 多值查询 -->
+        <if test="param.objectTypes != null and param.objectTypes.length > 0">
+            AND file_detail.object_type IN
+            <foreach collection="param.objectTypes" item="type" index="index" open="(" close=")" separator=",">
+                #{type}
+            </foreach>
+        </if>
+        <if test="param.uploadStatusList != null and param.uploadStatusList.length > 0">
+            AND file_detail.upload_status IN
+            <foreach collection="param.uploadStatusList" item="status" index="index" open="(" close=")" separator=",">
+                #{status}
+            </foreach>
+        </if>
+
+        <!-- 模糊查询 -->
+        <if test="param.andQueryContentIn != null and param.andQueryContentIn.length > 0">
+            AND (
+            <foreach collection="param.andQueryContentIn" item="str" index="index" separator=" OR ">
+                row_to_json(file_detail)||'' LIKE '%'|| #{str}||'%'
+            </foreach>
+            )
+        </if>
+
+        <!-- ID IN查询 -->
+        <if test="param.andIdsIn != null and param.andIdsIn.length > 0">
+            AND file_detail.id IN
+            <foreach collection="param.andIdsIn" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+
+        <!-- ID NOT IN查询 -->
+        <if test="param.andIdsNotIn != null and param.andIdsNotIn.length > 0">
+            AND file_detail.id NOT IN
+            <foreach collection="param.andIdsNotIn" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- 留作备用，不用刻意维护 -->
+    <resultMap id="BaseResultMap" type="cn.geoair.geoairteam.gwc.model.sys.dto.FileDetailDto">
+    </resultMap>
+
+    <sql id="fieldList">
+        file_detail.id,
+        file_detail.url,
+        file_detail.size,
+        file_detail.filename,
+        file_detail.original_filename,
+        file_detail.base_path,
+        file_detail.path,
+        file_detail.ext,
+        file_detail.content_type,
+        file_detail.platform,
+        file_detail.th_url,
+        file_detail.th_filename,
+        file_detail.th_size,
+        file_detail.th_content_type,
+        file_detail.object_id,
+        file_detail.object_type,
+        file_detail.metadata,
+        file_detail.user_metadata,
+        file_detail.th_metadata,
+        file_detail.th_user_metadata,
+        file_detail.attr,
+        file_detail.file_acl,
+        file_detail.th_file_acl,
+        file_detail.hash_info,
+        file_detail.upload_id,
+        file_detail.upload_status,
+        file_detail.create_time
+    </sql>
+
+    <select id="searchList" resultType="cn.geoair.geoairteam.gwc.model.sys.dto.FileDetailDto">
+        SELECT * FROM <include refid="tableName"></include>
+        <where>
+            1 = 1
+            <include refid="condition"></include>
+        </where>
+        ORDER BY file_detail.create_time DESC
+    </select>
+
+</mapper>

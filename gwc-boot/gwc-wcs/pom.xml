@@ -1,0 +1,300 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.geoair.geoairteam.platform.gwc.boot</groupId>
+        <artifactId>gwc-boot</artifactId>
+        <version>26.gwc.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>gwc-wcs</artifactId>
+    <name>gwc-wcs</name>
+
+
+    <properties>
+        <skipTests>true</skipTests>
+        <public.resources.directory>${basedir}/../gwc-config/src/main/resources</public.resources.directory>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.geoair.devkit</groupId>
+            <artifactId>geoair-knife4j-springfox-spring-boot-starter</artifactId>
+            <version>${geoair.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>cn.geoair.devkit</groupId>
+            <artifactId>geoair-db-service-spring-boot-starter</artifactId>
+            <version>${geoair.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geowebcache</groupId>
+            <artifactId>gtc-web-ctr</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.geoair.geoairteam.gwc</groupId>
+            <artifactId>gwc-mapper-tk</artifactId>
+            <version>${gwc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>cn.geoair.geoairteam.gwc</groupId>-->
+        <!--            <artifactId>gwc-mybatis-plus</artifactId>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.persistence</groupId>
+                    <artifactId>persistence-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--		<dependency>-->
+        <!--			<groupId>com.baomidou</groupId>-->
+        <!--			<artifactId>mybatis-plus-boot-starter</artifactId>-->
+        <!--		</dependency>-->
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.x-file-storage</groupId>
+            <artifactId>x-file-storage-spring</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.geoair.geoairteam.gwc</groupId>
+            <artifactId>gwc-service</artifactId>
+            <version>${gwc.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>cn.geoair.devkit</groupId>
+            <artifactId>geoair-adv-query</artifactId>
+            <version>${geoair.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}-${package.environment}</finalName>
+
+        <plugins>
+
+            <!-- 1. 读取 Git 提交信息 -->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+
+                    <!-- 包含提交信息相关属性（关键） -->
+                    <includeOnlyProperties>
+                        <includeOnlyProperty>^git.commit.id$</includeOnlyProperty>          <!-- 完整提交哈希 -->
+                        <includeOnlyProperty>^git.commit.time$</includeOnlyProperty>      <!-- 提交时间 -->
+                        <includeOnlyProperty>^git.commit.message.full$</includeOnlyProperty> <!-- 完整提交信息 -->
+                        <includeOnlyProperty>^git.commit.message.short$</includeOnlyProperty> <!-- 提交标题（第一行） -->
+                        <includeOnlyProperty>^git.branch$</includeOnlyProperty> <!-- 提交标题（第一行） -->
+                    </includeOnlyProperties>
+
+                    <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+                    <dateFormatTimeZone>Asia/Shanghai</dateFormatTimeZone>
+                    <verbose>false</verbose>
+                    <skipPoms>true</skipPoms>
+                </configuration>
+            </plugin>
+
+            <!-- 下面这些插件可以让你打一个很小的jar包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <configuration>
+                    <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
+                    <!-- 项目resource下的以下几种目录配置文件都不打入jar包 -->
+                    <excludes>
+                        <exclude>application-${package.environment}.yml</exclude>
+                    </excludes>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 程序启动入口 -->
+                            <mainClass>cn.geoair.geoairteam.gwc.wcs.RootBootWcsApplication</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 包含系统级别的jar包-->
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}/lib</outputDirectory>
+                            <!-- 是否不包含间接依赖 -->
+                            <excludeTransitive>false</excludeTransitive>
+                            <!-- 忽略版本 -->
+                            <stripVersion>false</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!--拷贝资源文件 copy-resources -->
+            <!-- 所有的配置文件拷贝到 目录中 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources/env-resources-${package.environment}
+                                    </directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*-${package.environment}.yml</include>
+                                        <include>*-${package.environment}.yaml</include>
+                                        <include>*-${package.environment}.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 打包发布时，跳过单元测试 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+
+</project>

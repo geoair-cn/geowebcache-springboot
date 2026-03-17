@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.geoair.geoairteam.gwc</groupId>
+    <artifactId>gwc-geowebcache</artifactId>
+    <version>26.gwc.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>org.geowebcache</groupId>
+  <artifactId>gtc-tdt-support</artifactId>
+  <packaging>jar</packaging>
+
+  <description>天地图加载方式适配</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-arcgiscache</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>cn.geoair.geoairteam.gwc</groupId>
+      <artifactId>gwc-service</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>cn.geoair.devkit</groupId>
+      <artifactId>geoair-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-wmts</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+    </dependency>
+  </dependencies>
+</project>

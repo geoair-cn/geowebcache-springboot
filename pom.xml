@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>cn.geoair.devkit</groupId>
+        <artifactId>geoair-project-parent</artifactId>
+          <version>J8.1.0-RC1</version>
+        <relativePath/>
+    </parent>
+
+
+    <groupId>cn.geoair.geoairteam.gwc</groupId>
+    <artifactId>gir-gwc</artifactId>
+    <version>26.gwc.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>gwc-server</name>
+
+    <properties>
+        <gwc.version>26.gwc.1-SNAPSHOT</gwc.version>
+        <geoair.version>J8.1.0-RC1</geoair.version>
+        <skipTests>true</skipTests>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+
+            <dependency>
+                <groupId>cn.geoair.devkit</groupId>
+                <artifactId>geoair-standard</artifactId>
+                <version>${geoair.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-model</artifactId>
+                <version>${gwc.version}</version>
+                <type>jar</type>
+            </dependency>
+
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-dao</artifactId>
+                <version>${gwc.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-mapper-tk</artifactId>
+                <version>${gwc.version}</version>
+                <type>jar</type>
+            </dependency>
+
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-api</artifactId>
+                <version>${gwc.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-servface</artifactId>
+                <version>${gwc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gwc-service</artifactId>
+                <version>${gwc.version}</version>
+                <type>jar</type>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>gwc-api</module>
+        <module>gwc-model</module>
+        <module>gwc-service</module>
+        <module>gwc-servface</module>
+        <module>gwc-dao</module>
+        <module>gwc-mapper-tk</module>
+        <module>gwc-code-gen</module>
+        <module>gwc-geowebcache</module>
+<!--        <module>gwc-mybatis-plus</module>-->
+        <module>gwc-boot</module>
+    </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>109-release</id>
+            <url>http://139.9.119.98:9051/repository/109-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>109-snapshot</id>
+            <url>http://139.9.119.98:9051/repository/109-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+    </build>
+
+</project>

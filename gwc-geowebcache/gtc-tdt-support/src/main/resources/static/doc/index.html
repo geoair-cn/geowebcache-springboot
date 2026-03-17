@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天地图WMTS测试 (EPSG:4326)</title>
+    <!--    <script src="https://cdn.tailwindcss.com/3.4.16"></script>-->
+    <!--    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
+    <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@7.3.0/ol.css">-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/ol@7.3.0/dist/ol.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>-->
+
+    <link href="js/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="js/ol.css">
+    <script src="js/ol.js"></script>
+    <script src="js/proj4.js"></script>
+    <script src="js/3.4.16.js"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .map-control {
+                @apply bg-white/90 rounded-md p-2 shadow-md z-10 transition-all duration-200 hover:shadow-lg;
+            }
+
+            .layer-item {
+                @apply flex items-center space-x-2 py-1.5 cursor-pointer hover:bg-gray-100 px-2 rounded transition-colors duration-150;
+            }
+
+            .control-btn {
+                @apply p-2 rounded hover:bg-gray-200 transition-colors duration-150;
+            }
+
+            .ol-zoom {
+                @apply left-4 bottom-4 top-auto !important;
+            }
+
+            .ol-scale-line {
+                @apply left-4 bottom-[80px] !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+<!-- 顶部表单区域 -->
+<div class="bg-white shadow-sm p-4">
+    <div class="container mx-auto flex flex-wrap gap-4">
+        <div class="container mx-auto flex flex-wrap gap-4">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-sm font-medium text-gray-700 mb-1">选择接口类型</label>
+                <select id="interfaceType"
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <option value="mix">WMTS通用接口</option>
+                    <option value="xyz">xyz请求方式</option>
+                    <option value="tms">tms请求方式</option>
+                    <option value="debug">调试网格WMTS</option>
+                    <option value="debugXYZ">调试网格XYZ</option>
+                    <option value="debugTMS">调试网格TMS</option>
+                    <option value="group">组图层请求接口{过时}</option>
+                    <option value="layer">单图层请求接口{过时}</option>
+                    <option value="layer_group">图层图层组叠加接口{过时}</option>
+
+                </select>
+            </div>
+
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-sm font-medium text-gray-700 mb-1">图层/图层组名称</label>
+                <input type="text" id="layerName" required placeholder="例如: fengtaiyeshi0401:1"
+                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-sm font-medium text-gray-700 mb-1">服务器地址</label>
+                <input type="text" id="serverUrl" value="http://127.0.0.1:26888/geowebcache" required
+                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+
+            <div class="flex items-end">
+                <button type="button" id="loadMapBtn"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 shadow-sm flex items-center gap-2">
+                    <i class="fa fa-map"></i>
+                    <span>加载地图</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 状态提示 -->
+<div id="response" class="bg-blue-50 border-t border-b border-blue-200 px-4 py-2 text-sm"></div>
+
+<!-- 地图容器 -->
+<div id="map" class="w-full h-[calc(100vh-120px)]"></div>
+
+<script>
+    // 注册EPSG:4326投影
+    proj4.defs("EPSG:4326", "+proj=longlat +ellps=CGCS2000 +no_defs");
+    ol.proj.proj4.register(proj4);
+
+    // 全局变量
+    let map;
+
+
+    let customizeLayer;
+
+    let adminLayer;
+    let baseLayer;
+    let gridLayer;
+
+    // 行政区划代码与名称映射
+    const adminMap = {
+        "110000": "北京市",
+        "120000": "天津市",
+        "130000": "河北省",
+        "140000": "山西省",
+        "150000": "内蒙古自治区",
+        "210000": "辽宁省",
+        "220000": "吉林省",
+        "230000": "黑龙江省",
+        "310000": "上海市",
+        "320000": "江苏省",
+        "330000": "浙江省",
+        "340000": "安徽省",
+        "350000": "福建省",
+        "360000": "江西省",
+        "370000": "山东省",
+        "410000": "河南省",
+        "420000": "湖北省",
+        "430000": "湖南省",
+        "440000": "广东省",
+        "450000": "广西壮族自治区",
+        "460000": "海南省",
+        "500000": "重庆市",
+        "510000": "四川省",
+        "520000": "贵州省",
+        "530000": "云南省",
+        "540000": "西藏自治区",
+        "610000": "陕西省",
+        "620000": "甘肃省",
+        "630000": "青海省",
+        "640000": "宁夏回族自治区",
+        "650000": "新疆维吾尔自治区",
+        "710000": "台湾省",
+        "810000": "香港特别行政区",
+        "820000": "澳门特别行政区"
+    };
+    var resolutions = [1.4062500000059488, 0.7031250000029744, 0.3515625000014872, 0.1757812500007436, 0.0878906250003718, 0.0439453125001859, 0.02197265625009295, 0.010986328125046475, 0.0054931640625232375, 0.0027465820312616187, 0.0013732910156308094, 6.866455078154049E-4, 3.433227539077023E-4, 1.7166137695385117E-4, 8.583068847692559E-5, 4.2915344238462806E-5, 2.1457672119231403E-5, 1.0728836059615698E-5, 5.364418029807849E-6, 2.6822090149039246E-6, 1.3411045074519623E-6];
+
+    // 根据天地图WMTS元数据创建瓦片矩阵集
+    function createWMTSMatrixSet() {
+        const matrixIds = [];
+        for (let i = 0; i < 18; i++) {
+            matrixIds[i] = String(i); // 矩阵ID为 '1' 到 '18'
+
+        }
+
+        return new ol.tilegrid.WMTS({
+            tileSize: [256, 256],
+            extent: [-180.0, -270.0000000015229, 180.0000000015229, 90.0],
+            origin: [-180.0, 90.0],
+            resolutions: resolutions,
+            matrixIds: matrixIds
+        })
+    }
+
+    // 初始化地图
+    function initMap() {
+        // 创建EPSG:4326底图（使用OpenStreetMap作为示例）
+        createBaseLayer();
+
+        // 创建网格图层
+        createGridLayer();
+
+        // 初始化地图，使用EPSG:4326投影，中心点设为北京
+        map = new ol.Map({
+            target: 'map',
+            layers: [gridLayer], // 确保网格图层被添加到地图中
+            view: new ol.View({
+                projection: 'EPSG:4326',
+                center: [116.3956, 39.9152], // 北京坐标 (EPSG:4326)
+                zoom: 4
+            }),
+            controls: [] // 自定义控件
+        });
+
+        // 添加自定义图层控制（右下角）
+        addLayerControl();
+
+        // 添加缩放控件（左下角）
+        map.addControl(new ol.control.Zoom({
+            className: 'ol-zoom map-control'
+        }));
+
+        // 添加比例尺（左下角，缩放控件上方）
+        map.addControl(new ol.control.ScaleLine({
+            projection: 'EPSG:4326',
+            className: 'ol-scale-line map-control'
+        }));
+
+        // 添加全屏控制
+        map.addControl(new ol.control.FullScreen());
+
+        // 添加鼠标位置显示，使用EPSG:4326
+        map.addControl(new ol.control.MousePosition({
+            coordinateFormat: ol.coordinate.createStringXY(6),
+            projection: 'EPSG:4326',
+            className: 'custom-mouse-position',
+            undefinedHTML: '&nbsp;'
+        }));
+
+        // 添加点击事件显示坐标
+        map.on('click', function (e) {
+            const coordinate = e.coordinate;
+            showPopup(coordinate, `点击坐标: ${coordinate[1].toFixed(6)}, ${coordinate[0].toFixed(6)} (EPSG:4326)`);
+        });
+
+        // 显示初始化状态
+        document.getElementById('response').innerHTML = '地图已初始化，点击"加载天地图"按钮开始';
+
+        // 加载所有行政区划边界
+        loadAllAdminBoundaries();
+    }
+
+    // 创建EPSG:4326底图
+    function createBaseLayer() {
+        // 使用天地图的WMTS服务作为底图
+        baseLayer = new ol.layer.Tile({
+            source: new ol.source.WMTS({
+                url: 'http://t0.tianditu.gov.cn/vec_c/wmts?tk=8f371085dc57b532219960dc4fb0d5c0',
+                layer: 'vec_c',
+                matrixSet: 'c',
+                format: 'image/png',
+                projection: 'EPSG:4326',
+                tileGrid: createWMTSMatrixSet(),
+                style: '',
+                crossOrigin: 'anonymous',
+                attributions: '© 天地图'
+            })
+
+        })
+    }
+
+    // 创建网格图层
+    function createGridLayer() {
+        // 创建网格图层，使用EPSG:4326投影
+        gridLayer = new ol.layer.Tile({
+            source: new ol.source.TileDebug({
+                tileGrid: new ol.tilegrid.TileGrid({
+                    extent: [-180, -90, 180, 90],
+                    resolutions: createWMTSMatrixSet().getResolutions(),
+                    tileSize: 256
+                }),
+                projection: 'EPSG:4326'
+            }),
+            visible: true, // 默认可见
+            title: '网格线',
+            style: function (feature, resolution) {
+                // 获取瓦片的 z, x, y 坐标
+                const tileCoord = feature.get('tileCoord');
+                if (tileCoord) {
+                    const z = tileCoord[0];
+                    const x = tileCoord[1];
+                    const y = -tileCoord[2] - 1; // 调整 y 坐标以匹配 OpenLayers 的坐标系
+
+                    // 返回自定义样式，显示 zxy 坐标
+                    return new ol.style.Style({
+                        text: new ol.style.Text({
+                            text: `z:${z}, x:${x}, y:${y}`,
+                            font: '8px sans-serif',
+                            fill: new ol.style.Fill({color: '#ffffff'}),
+                            stroke: new ol.style.Stroke({color: '#978484', width: 1}),
+                            offsetX: 0,
+                            offsetY: 0,
+                            textAlign: 'start',
+                            textBaseline: 'top'
+                        })
+                    });
+                }
+            }
+        });
+    }
+
+    // function createGridLayer() {
+    //     gridLayer = new ol.layer.Tile({
+    //         source: new ol.source.WMTS({
+    //             url: 'grid/wmts',
+    //             layer: 'grid',
+    //             matrixSet: 'c',
+    //             format: 'image/png',
+    //             projection: 'EPSG:4326',
+    //             tileGrid: createWMTSMatrixSet(),
+    //             style: '',
+    //             crossOrigin: 'anonymous'
+    //         })
+    //
+    //     })
+    // }
+
+    // 添加自定义图层控制（右下角）
+    function addLayerControl() {
+        const layerControl = document.createElement('div');
+        layerControl.className = 'map-control absolute bottom-4 right-4 w-48';
+        layerControl.innerHTML = `
+            <div class="font-medium text-sm mb-2 border-b border-gray-200 pb-1 flex justify-between items-center">
+                <span>图层控制</span>
+                <i class="fa fa-cog text-gray-400 hover:text-gray-600 cursor-pointer transition-colors duration-150" id="layer-settings"></i>
+            </div>
+            <div class="space-y-1" id="layer-list">
+                <div class="layer-item" data-layer="baseLayer">
+                    <input type="checkbox" id="baseCheckbox" checked class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                    <label for="baseCheckbox" class="text-sm">基础地图</label>
+                </div>
+                <div class="layer-item" data-layer="customizeLayer">
+                    <input type="checkbox" id="wmtsCheckbox" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" disabled>
+                    <label for="wmtsCheckbox" class="text-sm">WMTS图层</label>
+                </div>
+                <div class="layer-item" data-layer="adminLayer">
+                    <input type="checkbox" id="adminCheckbox" checked class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                    <label for="adminCheckbox" class="text-sm">行政区划边界</label>
+                </div>
+                <div class="layer-item" data-layer="gridLayer">
+                    <input type="checkbox" id="gridCheckbox" class="form-checkbox h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+                    <label for="gridCheckbox" class="text-sm">网格线</label>
+                </div>
+            </div>
+        `;
+
+        // 添加到地图
+        map.getTargetElement().appendChild(layerControl);
+
+        // 添加事件监听
+        document.querySelectorAll('.layer-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const layerName = item.dataset.layer;
+
+            checkbox.addEventListener('change', function () {
+                if (window[layerName]) {
+                    window[layerName].setVisible(this.checked);
+
+                    // 确保图层顺序正确
+                    if (layerName === 'gridLayer' && this.checked) {
+                        map.getLayers().remove(gridLayer);
+                        map.getLayers().push(gridLayer);
+                    } else if (layerName === 'adminLayer' && this.checked) {
+                        map.getLayers().remove(adminLayer);
+                        map.getLayers().insertAt(1, adminLayer); // 行政区划边界在网格层之下
+                    } else if (layerName === 'customizeLayer' && this.checked) {
+                        map.getLayers().remove(customizeLayer);
+                        map.getLayers().insertAt(2, customizeLayer); // WMTS图层在行政区划边界之下
+                    } else if (layerName === 'baseLayer' && this.checked) {
+                        map.getLayers().remove(baseLayer);
+                        map.getLayers().insertAt(3, baseLayer); // 基础图层在最下层
+                    }
+                }
+            });
+        });
+
+        // 图层设置按钮事件
+        document.getElementById('layer-settings').addEventListener('click', function () {
+            alert('图层设置功能将在未来版本中添加');
+        });
+    }
+
+    // 显示弹出窗口
+    function showPopup(coordinate, content) {
+        // 移除现有弹出窗口
+        const existingPopup = document.getElementById('map-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+
+        // 创建新的弹出窗口
+        const popup = document.createElement('div');
+        popup.id = 'map-popup';
+        popup.className = 'absolute bg-white p-2 rounded shadow-md z-20 max-w-xs transform transition-all duration-200 opacity-0';
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        popup.style.transform = 'translate(-50%, -100%)';
+        popup.innerHTML = `
+                <div class="text-sm">${content}</div>
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-3 h-3 rotate-45 bg-white"></div>
+            `;
+
+        // 添加到地图
+        map.getTargetElement().appendChild(popup);
+
+        // 淡入效果
+        setTimeout(() => {
+            popup.style.opacity = '1';
+        }, 10);
+
+        // 点击其他地方关闭弹出窗口
+        setTimeout(() => {
+            const mapElement = map.getTargetElement();
+            const clickHandler = function (e) {
+                if (!popup.contains(e.target)) {
+                    popup.style.opacity = '0';
+                    setTimeout(() => {
+                        popup.remove();
+                        mapElement.removeEventListener('click', clickHandler);
+                    }, 200);
+                }
+            };
+            mapElement.addEventListener('click', clickHandler);
+        }, 0);
+    }
+
+    // 加载天地图WMTS图层
+    function loadMap() {
+        try {
+            document.getElementById('response').innerHTML = '正在加载天地图WMTS图层...';
+
+            const interfaceType = document.getElementById('interfaceType').value;
+            let layerName = document.getElementById('layerName').value;
+            const serverUrl = document.getElementById('serverUrl').value;
+            const matrixSet = createWMTSMatrixSet();
+            var projection = ol.proj.get("EPSG:4326");
+            var projectionExtent = projection.getExtent();
+            let tileUrl = `${serverUrl}/geoair/xyz/${layerName}/4490/`;
+            if (interfaceType === 'xyz' || interfaceType === 'tms') {
+                if (customizeLayer) {
+                    map.removeLayer(customizeLayer);
+                }
+                if (interfaceType === 'xyz') {
+                    customizeLayer = new ol.layer.Tile({
+                        source: new ol.source.XYZ({
+                            projection: projection,
+                            tileGrid: new ol.tilegrid.TileGrid({
+                                origin: [-180, 90],
+                                resolutions: resolutions,
+                                extent: projectionExtent,
+                                tileSize: [256, 256],
+                            }),
+                            url: tileUrl + "{z}/{x}/{y}?zxyType=zxy&orginType=wmts"
+                        })
+                    })
+                } else {
+                    customizeLayer = new ol.layer.Tile({
+                        source: new ol.source.XYZ({
+                            projection: projection,
+                            tileGrid: new ol.tilegrid.TileGrid({
+                                origin: [-180, 90],
+                                resolutions: resolutions,
+                                extent: projectionExtent,
+                                tileSize: [256, 256],
+                            }),
+                            url: tileUrl + "{z}/{x}/{-y}?zxyType=zxy&orginType=tms"
+                        })
+                    })
+                }
+
+                map.addLayer(customizeLayer);
+            } else if (interfaceType === 'debugXYZ') {
+                let tileUrl = `${serverUrl}/geoair/debug/grid/xyz/${layerName}/4490/`;
+                if (customizeLayer) {
+                    map.removeLayer(customizeLayer);
+                }
+                customizeLayer = new ol.layer.Tile({
+                    source: new ol.source.XYZ({
+                        projection: projection,
+                        tileGrid: new ol.tilegrid.TileGrid({
+                            origin: [-180, 90],
+                            resolutions: resolutions,
+                            extent: projectionExtent,
+                            tileSize: [256, 256],
+                        }),
+                        url: tileUrl + "{z}/{x}/{y}?zxyType=zxy&orginType=xyz"
+                    })
+                })
+                map.addLayer(customizeLayer);
+            } else if (interfaceType === 'debugTMS') {
+                let tileUrl = `${serverUrl}/geoair/debug/grid/xyz/${layerName}/4490/`;
+                if (customizeLayer) {
+                    map.removeLayer(customizeLayer);
+                }
+                customizeLayer = new ol.layer.Tile({
+                    source: new ol.source.XYZ({
+                        projection: projection,
+                        tileGrid: new ol.tilegrid.TileGrid({
+                            origin: [-180, 90],
+                            resolutions: resolutions,
+                            extent: projectionExtent,
+                            tileSize: [256, 256],
+                        }),
+                        url: tileUrl + "{z}/{x}/{-y}?zxyType=zxy&orginType=tms"
+                    })
+                })
+                map.addLayer(customizeLayer);
+            } else {
+                // 天地图服务器子域名列表，用于负载均衡
+                if (interfaceType === 'debug') {
+                    layerName = 'grid';
+                }
+
+                // 构建WMTS瓦片请求URL (使用EPSG:4326)
+                let tileUrl = `${serverUrl}/geoair/${interfaceType}/${layerName}/wmts`;
+
+                console.log("WMTS请求URL:", tileUrl);
+
+                // 创建WMTS图层，使用EPSG:4326投影
+                if (customizeLayer) {
+                    map.removeLayer(customizeLayer);
+                }
+
+
+                customizeLayer = new ol.layer.Tile({
+                    source: new ol.source.WMTS({
+                        url: tileUrl,
+                        layer: layerName,
+                        matrixSet: 'c',
+                        format: 'image/png',
+                        projection: 'EPSG:4326',
+                        tileGrid: matrixSet,
+                        style: 'c',
+                        crossOrigin: 'anonymous',
+                    }),
+                    visible: true,
+                    title: '天地图图层'
+                });
+                map.addLayer(customizeLayer);
+            }
+
+
+            // 添加到地图
+            map.removeLayer(gridLayer);
+            map.removeLayer(adminLayer);
+
+            map.addLayer(gridLayer);
+            map.addLayer(adminLayer);
+            // 启用WMTS图层复选框
+            document.getElementById('wmtsCheckbox').disabled = false;
+            document.getElementById('wmtsCheckbox').checked = true;
+
+            // 设置视图中心为中国
+            map.getView().setCenter([105, 35]); // 中国中心坐标
+            map.getView().setZoom(4);
+
+            document.getElementById('response').innerHTML = `天地图WMTS图层 (${layerName}) 已加载 (EPSG:4326)`;
+
+            // 强制地图重新渲染
+            setTimeout(() => {
+                map.updateSize();
+                map.render();
+            }, 500);
+
+        } catch (error) {
+            document.getElementById('response').innerHTML = `错误: ${error.message}`;
+            console.error(error);
+        }
+    }
+
+    // 加载所有行政区划边界
+    async function loadAllAdminBoundaries() {
+        try {
+            document.getElementById('response').innerHTML = '正在加载行政区划边界数据...';
+
+            // 创建矢量数据源
+            const source = new ol.source.Vector({});
+
+            // 并行加载所有省级行政区划
+            const loadPromises = Object.keys(adminMap).map(code => {
+                return fetch(`./geojson/${code}.geoJson`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`加载失败: ${response.status} - ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(geojson => {
+                        // 将GeoJSON特性添加到数据源，指定EPSG:4326投影
+                        const features = new ol.format.GeoJSON().readFeatures(geojson, {
+                            dataProjection: 'EPSG:4326', // 假设GeoJSON是EPSG:4326格式
+                            featureProjection: 'EPSG:4326'
+                        });
+
+                        // 为每个特性添加行政区划代码和名称属性
+                        features.forEach(feature => {
+                            // 确保名称属性存在且为字符串类型
+                            const name = String(feature.get('name') || adminMap[code] || '');
+                            feature.set('code', code);
+                            feature.set('name', name);
+                        });
+
+                        source.addFeatures(features);
+                    })
+                    .catch(error => {
+                        console.warn(`加载 ${adminMap[code]} (${code}) 失败: ${error.message}`);
+                        return null;
+                    });
+            });
+
+            // 等待所有加载完成
+            const results = await Promise.allSettled(loadPromises);
+
+            // 检查是否有成功加载的图层
+            const successfulLoads = results.filter(r => r.status === 'fulfilled' && r.value !== null).length;
+
+            if (successfulLoads === 0) {
+                throw new Error('未能加载任何行政区划数据');
+            }
+
+            // 创建行政区划图层
+            adminLayer = new ol.layer.Vector({
+                source: source,
+                style: function (feature) {
+                    // 获取名称属性并确保它是字符串类型
+                    const name = String(feature.get('name') || '');
+
+                    // 如果名称为空或无效，不显示标签
+                    if (!name.trim()) {
+                        return new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: '#ff0000', // 边界线为红色
+                                width: 2
+                            }),
+                            fill: new ol.style.Fill({
+                                color: 'rgb(227,227,223)' // 中间半透明
+                            })
+                        });
+                    }
+
+                    // 否则返回完整样式，包括标签
+                    return new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: '#ff0000', // 边界线为红色
+                            width: 2
+                        }),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(236,232,228,0)' // 中间半透明
+                        }),
+                        text: new ol.style.Text({
+                            font: '12px sans-serif',
+                            fill: new ol.style.Fill({color: '#333'}),
+                            stroke: new ol.style.Stroke({color: '#fff', width: 2}),
+                            offsetY: -10,
+                            text: name,
+                            placement: 'point',
+                            maxVisibleZoom: 6
+                        })
+                    });
+                },
+                visible: true,
+                title: '行政区划边界'
+            });
+
+            // 添加到地图
+            map.addLayer(adminLayer);
+
+            document.getElementById('response').innerHTML = `已加载 ${successfulLoads} 个行政区划边界数据 (EPSG:4326)`;
+
+            // 添加行政区划点击事件
+            map.on('click', function (e) {
+                map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                    const code = feature.get('code');
+                    const name = feature.get('name');
+                    if (code && name) {
+                        showPopup(e.coordinate, `行政区划: ${name} (${code})`);
+                    }
+                });
+            });
+
+            // 添加悬停高亮效果
+            map.on('pointermove', function (e) {
+                if (e.dragging) return;
+
+                const pixel = map.getEventPixel(e.originalEvent);
+                const hit = map.hasFeatureAtPixel(pixel);
+
+                map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+            });
+
+        } catch (error) {
+            document.getElementById('response').innerHTML = `加载行政区划边界失败: ${error.message}`;
+            console.error(error);
+        }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        initMap();
+
+        // 绑定加载地图按钮事件
+        document.getElementById('loadMapBtn').addEventListener('click', loadMap);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天地图WMTS服务接口文档</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #333;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+<h1>天地图WMTS服务接口文档</h1>
+<h2>一、概述</h2>
+<p>本接口集合为天地图WMTS（Web Map Tile Service）服务提供支持，涵盖组图层、单图层以及图层与图层组叠加的请求处理功能，以满足多样化的地图数据获取需求。</p>
+
+<h2>二、接口列表</h2>
+<h3>（一）组图层请求接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/geoair/group/{layer}/wmts</li>
+            <li>/v2/{layer}/group/wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：处理组图层的WMTS请求，根据请求参数获取相应的地图瓦片或能力信息等。</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layer}：必填，图层组名称，用于指定请求的目标图层组。</li>
+            <li>request（隐式参数，通过HttpServletRequest获取）：包含请求头、请求参数等信息，用于获取具体的请求细节，如请求类型（GetCapabilities、GetTile等）、瓦片编号等。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://yourserver/geoair/group/world/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=world&style=&Format=image/png&TileMatrixSet=EPSG:4490&TileMatrix={z}&TileRow={y}&TileCol={x}</pre>
+    </li>
+    <li><strong>处理逻辑</strong>：
+        <ol>
+            <li>根据传入的{layer}图层组名称，调用layerGroupAliasService.searchLayerStringByLayerGroupAlias方法查找对应的真实图层字符串。若未找到匹配的别名，则使用传入的图层组名称作为真实图层字符串。</li>
+            <li>通过GISHubUtil.checkParameter方法检查请求参数的有效性，获取包含请求参数信息的Map对象。</li>
+            <li>从参数Map中获取request参数值（如GetCapabilities、GetTile等），根据不同的请求类型，创建GtcGroupWmtsService实例并调用相应的服务处理方法（doServiceGetCapabilities或doService）。</li>
+        </ol>
+    </li>
+</ul>
+
+<h3>（二）单图层请求接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/geoair/layer/{layer}/wmts/**</li>
+            <li>/v2/{layer}/layer/wmts/**</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：处理单图层的WMTS请求，根据请求参数获取相应的地图瓦片或能力信息等。</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layer}：必填，图层名称，用于指定请求的目标图层。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://yourserver/geoair/layer/country/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=country&style=&Format=image/png&TileMatrixSet=EPSG:4490&TileMatrix={z}&TileRow={y}&TileCol={x}</pre>
+    </li>
+    <li><strong>处理逻辑</strong>：
+        <ol>
+            <li>根据传入的{layer}图层名称，调用layerGroupAliasService.searchLayerStringByLayerGroupAlias方法查找对应的真实图层字符串。若未找到匹配的别名，则使用传入的图层名称作为真实图层字符串。</li>
+            <li>通过GISHubUtil.checkParameter方法检查请求参数的有效性，获取包含请求参数信息的Map对象。</li>
+            <li>从参数Map中获取request参数值（如GetCapabilities、GetTile等），根据不同的请求类型，创建SingletonLayerService实例并调用相应的服务处理方法（doServiceGetCapabilities或doService）。</li>
+        </ol>
+    </li>
+</ul>
+
+<h3>（三）图层图层组叠加接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/geoair/layer_group/{layer}/wmts</li>
+            <li>/v2/{layer}/layer_group/wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：处理图层与图层组叠加的WMTS请求，根据请求参数获取相应的叠加地图瓦片或能力信息等。</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layer}：必填，格式为layer,图层名@group,图层组名或layer|图层名@group|图层组名，用于指定请求的图层和图层组组合。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://yourserver/geoair/layer_group/layer,country@group,world/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=country&style=&Format=image/png&TileMatrixSet=EPSG:4326&TileMatrix=EPSG:4326:0&TileRow=0&TileCol=0</pre>
+    </li>
+    <li><strong>处理逻辑</strong>：
+        <ol>
+            <li>根据传入的{layer}组合名称，调用layerGroupAliasService.searchLayerStringByLayerGroupAlias方法查找对应的真实图层字符串。若未找到匹配的别名，则使用传入的组合名称作为真实图层字符串。</li>
+            <li>通过GISHubUtil.checkParameter方法检查请求参数的有效性，获取包含请求参数信息的Map对象。</li>
+            <li>从参数Map中获取request参数值（如GetCapabilities、GetTile等），根据不同的请求类型，创建MixtureGroupService实例并调用相应的服务处理方法（doServiceGetCapabilities或doService）。</li>
+        </ol>
+    </li>
+</ul>
+<h3>（四）调试网格WMTS接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/debug/grid/wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：
+        用于调试网格坐标系的WMTS服务，支持返回带有网格线的地图瓦片，主要用于开发阶段的坐标系校准、瓦片切割范围验证等场景。
+    </li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>service：必填，固定值 <code>WMTS</code>，指定服务类型。</li>
+            <li>request：必填，支持 <code>GetTile</code>（获取带网格的瓦片）和 <code>GetCapabilities</code>（获取调试网格服务能力）。</li>
+            <li>version：必填，固定值 <code>1.0.0</code>，指定WMTS协议版本。</li>
+            <li>layer：必填，固定值 <code>grid</code>，标识调试网格图层。</li>
+            <li>style：可选，默认值 <code>default</code>  </li>
+            <li>Format：必填，固定值 <code>image/png</code>，返回瓦片格式。</li>
+            <li>TileMatrixSet：必填，指定坐标系（如 <code>EPSG:4490</code> 或 <code>EPSG:3857</code>）。</li>
+            <li>TileMatrix：必填，瓦片层级（如 <code>0</code> 表示第0层级）。</li>
+            <li>TileRow/ TileCol：必填，瓦片行列号（从0开始计数）。</li>
+            <li>gridInterval：可选，网格间隔（单位：米，仅适用于投影坐标系），默认值为 <code>1000</code>。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>/debug/grid/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=debug_grid&style=grid_blue&Format=image/png&TileMatrixSet=EPSG:4490&TileMatrix={z}&TileRow={y}&TileCol={x}</pre>
+    </li>
+    <li><strong>处理逻辑</strong>：
+        <ol>
+            <li>校验必填参数 <code>service/request/version/layer/Format/TileMatrixSet/TileMatrix/TileRow/TileCol</code> 是否完整，缺失则抛出 <code>OWSException</code>。</li>
+            <li>根据 <code>TileMatrixSet</code> 解析坐标系类型（地理坐标系/投影坐标系），验证层级 <code>TileMatrix</code> 是否在有效范围内（0-18级）。</li>
+            <li>若请求为 <code>GetTile</code>：
+                <ul>
+                    <li>调用 <code>GridDebugService.generateGridTile()</code> 方法生成带网格线的瓦片图片，网格样式由 <code>style</code> 参数控制，间隔由 <code>gridInterval</code> 决定（默认1000米）。</li>
+                    <li>若坐标系为地理坐标系（如EPSG:4326），网格线按经纬度间隔绘制；若为投影坐标系（如EPSG:3857），按米间隔绘制。</li>
+                </ul>
+            </li>
+            <li>若请求为 <code>GetCapabilities</code>：
+                <ul>
+                    <li>返回包含调试网格服务信息的XML文档，包含支持的坐标系、样式列表、层级范围等元数据。</li>
+                </ul>
+            </li>
+            <li>调用 <code>GISHubUtil.cacheTile()</code> 方法缓存瓦片结果，提升后续请求性能。</li>
+        </ol>
+    </li>
+</ul>
+<h2>三、异常处理</h2>
+<p>本控制器具备全局异常处理机制，可有效应对多种异常情况：</p>
+<ul>
+    <li>OWSException：返回HTTP状态码400，错误信息以XML格式输出，通过ResponseUtils.writeErrorAsXML方法实现。</li>
+    <li>IOException：返回HTTP状态码400，错误信息以页面形式输出，通过ResponseUtils.writeErrorPage方法实现。</li>
+    <li>GeoWebCacheException：返回HTTP状态码400，错误信息以页面形式输出，通过ResponseUtils.writeErrorPage方法实现，将异常信息传递给该方法。</li>
+    <li>其他异常：记录错误日志，日志内容包含异常原因、请求URL和详细异常信息。返回HTTP状态码200，通过TC_ResponseUtils.writeErrorAsXML方法返回自定义错误信息，错误信息格式为OWSException的字符串表示形式。</li>
+</ul>
+
+<h2>四、注意事项</h2>
+<ol>
+    <li>所有接口均支持跨域请求，方便不同域的客户端进行访问。</li>
+    <li>图层名称和图层组名称支持别名机制，系统会自动根据别名查找对应的真实名称，提高使用的灵活性和便捷性。</li>
+    <li>对于WMTS请求，支持常见的操作类型，如GetCapabilities（用于获取服务能力描述文档）和GetTile（用于获取地图瓦片）等。</li>
+    <li>接口响应状态码通常为200，表示请求已成功处理，具体的处理结果通过响应内容返回。客户端在接收到响应时，应根据响应内容进行后续处理。</li>
+</ol>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+spring:
+    application:
+       name: geowebcache
+    main:
+      allow-bean-definition-overriding: true
+    mvc:
+      pathmatch:
+        matching-strategy: ant_path_matcher
+    profiles:
+        active: ${package.environment}
+        include: dao,config-${package.environment}
+    servlet:
+      multipart:
+        max-file-size: -1 #不做限制
+        max-request-size: -1 #不做限制
+    liquibase:
+      enabled: true
+      parameters:
+        secureParsing: false
+      change-log: classpath:changelog/gwc-server-changelog.xml
+      default-schema: public
+      drop-first: false
+server:
+  servlet:
+    context-path: /${spring.application.name}
+
+logging:
+   config: classpath:logback-spring.xml
+
+geoair:
+  dynamic:
+    db:
+      service:
+        default-password: geoair
+        default-user : geoair
+  apidoc:
+    version: 1.0
+    author: demo
+    title: API 在线文档
+gtc:
+   profile: ${package.environment}
+
+dromara:
+  x-file-storage:
+    default-platform: minio
+    thumbnail-suffix: ".jpg"
+
+gwc:
+  context:
+    suffix:
+
+
+
+

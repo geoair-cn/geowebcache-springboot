@@ -1,0 +1,55 @@
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 26888
+
+
+# 数据源配置
+spring:
+    datasource:
+        driverClassName: org.postgresql.Driver
+        url: jdbc:postgresql://192.168.0.110/gtc_geowebcache
+        username: postgres
+        password: tcsd2019
+        hikari:
+            maximum-pool-size: 50  #最大连接数量
+            minimum-idle: 5 #初始化时获取连接数量
+    redis:
+        database: 2
+        host: 192.168.0.109
+        port: 6379
+        #password: U9zPySpu # 密码（默认为空）
+        timeout: 6000  # 连接超时时长（毫秒）
+        jedis:
+            pool:
+                max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+                max-wait: -1ms      # 连接池最大阻塞等待时间（使用负�?�表示没有限制）
+                max-idle: 10      # 连接池中的最大空闲连�?
+                min-idle: 5       # 连接池中的最小空闲连�?
+
+geoair:
+    apidoc:
+        enable: false
+
+    gwc:
+        cache:
+            gwc-cache-dir:
+            gtc-cache-dir:
+            admin-password: geoair
+            admin-user-name: geoair
+logging:
+    level:
+        root: INFO
+dromara:
+    x-file-storage:
+        minio:
+            - platform: minio
+              enable-storage: true
+              access-key: XX
+              secret-key: XXX
+              end-point: http://192.168.0.111:9002
+              bucket-name: gwc
+              domain: http://111.geoair.com.cn:666/gwc
+              base-path: /gwc_local/

@@ -1,0 +1,269 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>cn.geoair.devkit</groupId>
+        <artifactId>geoair-spring-boot-starter-parent</artifactId>
+          <version>J8.1.0-RC1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>cn.geoair.geoairteam.platform.gwc.boot</groupId>
+    <artifactId>gwc-boot</artifactId>
+    <version>26.gwc.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>gwc-boot</name>
+
+
+    <properties>
+        <public.resources.directory>${basedir}/gwc-config/src/main/resources</public.resources.directory>
+        <gwc.version>26.gwc.1-SNAPSHOT</gwc.version>
+    </properties>
+
+    <modules>
+<!--        <module>gwc-config</module>-->
+        <module>gwc-wcs</module>
+        <!--		<module>gwc-wms</module>-->
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.geoair.geoairteam.gwc</groupId>
+                <artifactId>gir-gwc</artifactId>
+                <version>26.gwc.1-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <profiles>
+        <profile>
+            <!--  本地运行环境 -->
+            <id>local</id>
+            <properties>
+                <package.environment>local</package.environment>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!--  开发环境 -->
+            <id>dev</id>
+            <properties>
+                <package.environment>dev</package.environment>
+            </properties>
+        </profile>
+
+        <profile>
+            <!-- 测试环境 -->
+            <id>test</id>
+            <properties>
+                <package.environment>test</package.environment>
+            </properties>
+
+        </profile>
+
+        <profile>
+            <!-- 生产环境 -->
+            <id>pro</id>
+            <properties>
+                <package.environment>pro</package.environment>
+            </properties>
+
+        </profile>
+    </profiles>
+
+    <build>
+
+        <finalName>${project.artifactId}-${package.environment}</finalName>
+
+        <resources>
+
+            <!--加入公共资源-->
+
+            <resource>
+                <directory>${public.resources.directory}</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <include>**/application*.yaml</include>
+                    <include>**/application*.properties</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*-env.yml</exclude>
+                    <exclude>**/*-env.yaml</exclude>
+                    <exclude>**/*-env.properties</exclude>
+
+                    <exclude>env-resources-*/*</exclude>
+                </excludes>
+            </resource>
+
+            <resource>
+                <directory>${public.resources.directory}</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*-${package.environment}-env.yml</include>
+                    <include>**/*-${package.environment}-env.yaml</include>
+                    <include>**/*-${package.environment}-env.properties</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <directory>${public.resources.directory}</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/application*.yml</exclude>
+                    <exclude>**/application*.yaml</exclude>
+                    <exclude>**/application*.properties</exclude>
+
+                    <exclude>**/*-env.yml</exclude>
+                    <exclude>**/*-env.yaml</exclude>
+                    <exclude>**/*-env.properties</exclude>
+
+                    <exclude>env-resources-*/*</exclude>
+                </excludes>
+            </resource>
+
+
+            <!--配置公共切面资源路径-->
+
+            <resource>
+                <directory>${public.resources.directory}/env-resources-${package.environment}</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <include>**/application*.yaml</include>
+                    <include>**/application*.properties</include>
+                </includes>
+
+            </resource>
+
+            <resource>
+                <directory>${public.resources.directory}/env-resources-${package.environment}</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/application*.yml</exclude>
+                    <exclude>**/application*.yaml</exclude>
+                    <exclude>**/application*.properties</exclude>
+
+                </excludes>
+            </resource>
+
+
+            <!-- *************************************************配置资源路径************************************************* -->
+
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <include>**/application*.yaml</include>
+                    <include>**/application*.properties</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*-env.yml</exclude>
+                    <exclude>**/*-env.yaml</exclude>
+                    <exclude>**/*-env.properties</exclude>
+
+                    <exclude>env-resources-*/*</exclude>
+                </excludes>
+            </resource>
+
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*-${package.environment}-env.yml</include>
+                    <include>**/*-${package.environment}-env.yaml</include>
+                    <include>**/*-${package.environment}-env.properties</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/application*.yml</exclude>
+                    <exclude>**/application*.yaml</exclude>
+                    <exclude>**/application*.properties</exclude>
+
+                    <exclude>**/*-env.yml</exclude>
+                    <exclude>**/*-env.yaml</exclude>
+                    <exclude>**/*-env.properties</exclude>
+
+                    <exclude>env-resources-*/*</exclude>
+                </excludes>
+            </resource>
+
+
+            <!--配置切面资源路径-->
+
+            <resource>
+                <directory>${basedir}/src/main/resources/env-resources-${package.environment}</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <include>**/application*.yaml</include>
+                    <include>**/application*.properties</include>
+                </includes>
+
+            </resource>
+
+            <resource>
+                <directory>${basedir}/src/main/resources/env-resources-${package.environment}</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/application*.yml</exclude>
+                    <exclude>**/application*.yaml</exclude>
+                    <exclude>**/application*.properties</exclude>
+
+                </excludes>
+            </resource>
+
+
+            <!--
+        <resource>
+            <directory>${basedir}/src/main/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**/application*.yml</include>
+              <include>**/application*.yaml</include>
+              <include>**/application*.properties</include>
+            </includes>
+          </resource>
+          <resource>
+            <directory>${basedir}/src/main/resources</directory>
+            <excludes>
+              <exclude>**/application*.yml</exclude>
+              <exclude>**/application*.yaml</exclude>
+              <exclude>**/application*.properties</exclude>
+            </excludes>
+      </resource>
+      -->
+
+
+        </resources>
+
+        <pluginManagement>
+            <plugins></plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
+
+    </build>
+</project>

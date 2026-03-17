@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天地图WMTS服务接口文档</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #333;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+<h1>天地图WMTS服务接口文档</h1>
+<h2>一、概述</h2>
+<p>本接口集合为天地图WMTS（Web Map Tile Service）服务提供支持，涵盖组图层、单图层以及图层与图层组叠加的请求处理功能，以满足多样化的地图数据获取需求。</p>
+
+<h2>二、接口列表</h2>
+<h3>（一）WMTS请求接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/geoair/mix/{layerName}/wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：处理组图层的WMTS请求，根据请求参数获取相应的地图瓦片或能力信息等。</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layerName}：必填，图层名称，用于指定请求的目标图层 。</li>
+            <li>request（隐式参数，通过HttpServletRequest获取）：包含请求头、请求参数等信息，用于获取具体的请求细节，如请求类型（GetCapabilities、GetTile等）、瓦片编号等。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://XXX.XXX.XXX.XXX:26888/geowebcache/geoair/mix/{layerName}/wmts?service=WMTS&request=GetTile&version=1.0.0&layer={layerName}&style=&Format=image/png&TileMatrixSet=EPSG:4490&TileMatrix={z}&TileRow={y}&TileCol={x}</pre>
+    </li>
+
+</ul>
+<h3>（二）XYZ请求接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>geoair/xyz/{layerName}/4490/{z}/{x}/{y}?zxyType=zxy&orginType=wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>对于图层的XYZ坐标系请求接口，用于根据xyz获取指定图层瓦片数据。</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layerName}：必填，图层名称，用于指定请求的目标图层。</li>
+            <li>{z}：必填，图层名称，z级别。</li>
+            <li>{x}：必填，图层名称，x级别。</li>
+            <li>{y}：必填，图层名称，y级别。</li>
+            <li>{zxyType}：选填，标识你的请求是zxy发过来的还是zyx发过来的，默认是zxy。</li>
+            <li>{orginType}：选填，标识你的请求方式是xyz请求还是tms请求，默认是xyz（wmts）。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://XXX.XXX.XXX.XXX:26888/geowebcache/geoair/xyz/abcdLayer/4490/4/15/1?zxyType=zxy&orginType=wmts</pre>
+    </li>
+
+</ul>
+
+<h3>（三）TMS请求接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>geoair/xyz/{layerName}/4490/{z}/{x}/{y}?zxyType=zxy&orginType=tms</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong> 与2接口一致，就是你需要把orginType 参数换成 tms</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layerName}：必填，图层名称，用于指定请求的目标图层。</li>
+            <li>{z}：必填，图层名称，z级别。</li>
+            <li>{x}：必填，图层名称，x级别。</li>
+            <li>{y}：必填，图层名称，y级别。</li>
+            <li>{zxyType}：选填，标识你的请求是zxy发过来的还是zyx发过来的，默认是zxy。</li>
+            <li>{orginType}：选填，标识你的请求方式是xyz请求还是tms请求，默认是xyz（wmts）。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://XXX.XXX.XXX.XXX:26888/geowebcache/geoair/xyz/abcdLayer/4490/4/15/1?zxyType=zxy&orginType=tms</pre>
+    </li>
+
+</ul>
+
+<h3>（四）调试网格WMTS接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>/debug/grid/wmts</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>：
+        用于调试网格坐标系的WMTS服务，支持返回带有网格线的地图瓦片，主要用于开发阶段的坐标系校准、瓦片切割范围验证等场景。
+    </li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>service：必填，固定值 <code>WMTS</code>，指定服务类型。</li>
+            <li>request：必填，支持 <code>GetTile</code>（获取带网格的瓦片）和 <code>GetCapabilities</code>（获取调试网格服务能力）。</li>
+            <li>version：必填，固定值 <code>1.0.0</code>，指定WMTS协议版本。</li>
+            <li>layer：必填，固定值 <code>grid</code>，标识调试网格图层。</li>
+            <li>style：可选，任意值 <code>c</code>  </li>
+            <li>Format：必填，固定值 <code>image/png</code>，返回瓦片格式。</li>
+            <li>TileMatrixSet：必填，固定值 <code>c</code></li>
+            <li>TileMatrix：必填，瓦片层级（如 <code>0</code> 表示第0层级）。</li>
+            <li>TileRow/ TileCol：必填，瓦片行列号（从0开始计数）。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://127.0.0.1:26888/geowebcache/debug/grid/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=grid&style=c&Format=image/png&TileMatrixSet=EPSG:4490&TileMatrix={z}&TileRow={y}&TileCol={x}</pre>
+    </li>
+
+</ul>
+
+<h3>（五）调试网格XYZ/TMS接口</h3>
+<ul>
+    <li><strong>接口路径</strong>：
+        <ul>
+            <li>g/geoair/debug/grid/xyz/{layerName}/{gridSrid}/{z}/{x}/{y}?zxyType=zxy&orginType=tms</li>
+        </ul>
+    </li>
+    <li><strong>功能描述</strong>  支持返回带有网格线的地图瓦片，主要用于开发阶段的坐标系校准、瓦片切割范围验证等场景</li>
+    <li><strong>参数说明</strong>：
+        <ul>
+            <li>{layerName}：必填，图层名称，用于指定请求的目标图层。</li>
+            <li>{gridSrid}：必填，你的网格坐标系，如4490 ， 主要用于你的坐标原点为tms的时候，我来判断该怎么翻转。</li>
+            <li>{z}：必填，图层名称，z级别。</li>
+            <li>{x}：必填，图层名称，x级别。</li>
+            <li>{y}：必填，图层名称，y级别。</li>
+            <li>{zxyType}：选填，标识你的请求是zxy发过来的还是zyx发过来的，默认是zxy。</li>
+            <li>{orginType}：选填，标识你的请求方式是xyz请求还是tms请求，默认是xyz（wmts）。</li>
+        </ul>
+    </li>
+    <li><strong>请求示例</strong>：
+        <pre>http://XXX.XXX.XXX.XXX:26888/geowebcache/geoair/debug/grid/xyz/yeshi2024:4_3_2_1/4490/4/10/4?zxyType=zxy&orginType=tms</pre>
+    </li>
+
+</ul>
+
+
+
+</body>
+
+</html>
