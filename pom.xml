@@ -8,7 +8,7 @@
     <parent>
         <groupId>cn.geoair.devkit</groupId>
         <artifactId>geoair-project-parent</artifactId>
-          <version>J8.1.0-RC1</version>
+          <version>J8.1.0-RC2</version>
         <relativePath/>
     </parent>
 
@@ -21,7 +21,7 @@
 
     <properties>
         <gwc.version>26.gwc.1-SNAPSHOT</gwc.version>
-        <geoair.version>J8.1.0-RC1</geoair.version>
+        <geoair.version>J8.1.0-RC2</geoair.version>
         <skipTests>true</skipTests>
     </properties>
 
